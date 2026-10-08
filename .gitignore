@@ -1,0 +1,12 @@
+# Dependencias
+node_modules/
+
+# Variables de entorno (credenciales)
+.env
+
+# Compilados
+dist/
+
+# Sistema y editor
+.DS_Store
+Thumbs.db
