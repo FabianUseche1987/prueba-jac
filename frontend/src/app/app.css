@@ -1,0 +1,14 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  border: 1px solid red;
+}
+
+main {
+  flex: 1;
+  border: 1px solid blue;
+  background-color: #f5f5f5;
+}
+
+p { color: green; }
