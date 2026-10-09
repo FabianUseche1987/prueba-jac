@@ -10,8 +10,8 @@
 --   luis.castro@example.com      Ciudadano  · JAC Barrio El Progreso
 --   hector.mosquera@example.com  Presidente · JAC Barrio Calima (directivo)
 --
--- OJO: por ahora las contraseñas están en texto plano. En la Fase 3
--- (paso 3.1) se cifran con bcrypt y se actualiza este archivo.
+-- Las contraseñas ya están cifradas con bcrypt: contrasena_hash guarda
+-- el hash de "Jac2026*", nunca la contraseña en texto plano.
 -- =============================================================
 
 SET NAMES utf8mb4;
@@ -56,24 +56,24 @@ INSERT INTO junta (id_junta, nombre, barrio, municipio, departamento, nit, repre
   (20, 'JAC Santa Rita',          'Santa Rita',         'Ibagué',        'Tolima',             '900.998.877-5', 'Gloria Stella Varón',           '1987-09-03', 'activa');
 
 -- -------------------------------------------------------------
--- Usuarios (contraseña temporal de todos: Jac2026*)
+-- Usuarios (contraseña de todos: Jac2026*, guardada como hash de bcrypt)
 -- -------------------------------------------------------------
 INSERT INTO usuario (id_usuario, nombre, apellido, tipo_documento, numero_documento, email, telefono, contrasena_hash, estado, fecha_registro) VALUES
-  (1,  'Andrés Felipe',   'Rojas Mejía',      'CC', '1000000001', 'andres.rojas@example.com',    '3000000001', 'Jac2026*', 'activo', '2026-06-12 16:24:32'),
-  (2,  'Natalia',         'Cárdenas Ruiz',    'CC', '1000000002', 'natalia.cardenas@example.com','3000000002', 'Jac2026*', 'activo', '2026-06-12 16:26:28'),
-  (3,  'Luz Marina',      'Pardo Gil',        'CC', '1000000003', 'luz.pardo@example.com',       '3000000003', 'Jac2026*', 'activo', '2026-06-12 16:27:56'),
-  (4,  'Camilo',          'Fuentes Lara',     'CC', '1000000004', 'camilo.fuentes@example.com',  '3000000004', 'Jac2026*', 'activo', '2026-06-16 00:54:36'),
-  (5,  'Carlos Andrés',   'Ramírez Peña',     'CC', '1000000005', 'carlos.ramirez@example.com',  '3000000005', 'Jac2026*', 'activo', '2026-06-20 09:15:00'),
-  (6,  'Martha Lucía',    'Gómez Rincón',     'CC', '1000000006', 'martha.gomez@example.com',    '3000000006', 'Jac2026*', 'activo', '2026-06-20 10:02:00'),
-  (7,  'Jorge Eliécer',   'Moreno Díaz',      'CC', '1000000007', 'jorge.moreno@example.com',    '3000000007', 'Jac2026*', 'activo', '2026-06-21 14:30:00'),
-  (8,  'Diana Marcela',   'Ortiz Cárdenas',   'CC', '1000000008', 'diana.ortiz@example.com',     '3000000008', 'Jac2026*', 'activo', '2026-06-22 08:45:00'),
-  (9,  'Luis Fernando',   'Castro Vargas',    'CC', '1000000009', 'luis.castro@example.com',     '3000000009', 'Jac2026*', 'activo', '2026-06-25 19:10:00'),
-  (10, 'Sandra Patricia', 'Rojas León',       'CC', '1000000010', 'sandra.rojas@example.com',    '3000000010', 'Jac2026*', 'activo', '2026-06-26 11:20:00'),
-  (11, 'Héctor Fabio',    'Mosquera Riascos', 'CC', '1000000011', 'hector.mosquera@example.com', '3000000011', 'Jac2026*', 'activo', '2026-06-18 16:00:00'),
-  (12, 'Paola Andrea',    'Valencia Cuero',   'CC', '1000000012', 'paola.valencia@example.com',  '3000000012', 'Jac2026*', 'activo', '2026-06-19 09:40:00'),
-  (13, 'Óscar Iván',      'Quintero Lozano',  'CC', '1000000013', 'oscar.quintero@example.com',  '3000000013', 'Jac2026*', 'activo', '2026-07-02 13:25:00'),
-  (14, 'Gloria Inés',     'Arboleda Muñoz',   'CC', '1000000014', 'gloria.arboleda@example.com', '3000000014', 'Jac2026*', 'activo', '2026-07-03 17:50:00'),
-  (15, 'Administrador',   'JAC Connect',      'CC', '1000000015', 'admin@example.com',           NULL,         'Jac2026*', 'activo', '2026-06-01 08:00:00');
+  (1,  'Andrés Felipe',   'Rojas Mejía',      'CC', '1000000001', 'andres.rojas@example.com',    '3000000001', '$2b$10$pW2M8vittxnvCHFB6svm5.mTRtLRCym0wKRXnwkEbz.K66g1aLbhC', 'activo', '2026-06-12 16:24:32'),
+  (2,  'Natalia',         'Cárdenas Ruiz',    'CC', '1000000002', 'natalia.cardenas@example.com','3000000002', '$2b$10$pW2M8vittxnvCHFB6svm5.mTRtLRCym0wKRXnwkEbz.K66g1aLbhC', 'activo', '2026-06-12 16:26:28'),
+  (3,  'Luz Marina',      'Pardo Gil',        'CC', '1000000003', 'luz.pardo@example.com',       '3000000003', '$2b$10$pW2M8vittxnvCHFB6svm5.mTRtLRCym0wKRXnwkEbz.K66g1aLbhC', 'activo', '2026-06-12 16:27:56'),
+  (4,  'Camilo',          'Fuentes Lara',     'CC', '1000000004', 'camilo.fuentes@example.com',  '3000000004', '$2b$10$pW2M8vittxnvCHFB6svm5.mTRtLRCym0wKRXnwkEbz.K66g1aLbhC', 'activo', '2026-06-16 00:54:36'),
+  (5,  'Carlos Andrés',   'Ramírez Peña',     'CC', '1000000005', 'carlos.ramirez@example.com',  '3000000005', '$2b$10$pW2M8vittxnvCHFB6svm5.mTRtLRCym0wKRXnwkEbz.K66g1aLbhC', 'activo', '2026-06-20 09:15:00'),
+  (6,  'Martha Lucía',    'Gómez Rincón',     'CC', '1000000006', 'martha.gomez@example.com',    '3000000006', '$2b$10$pW2M8vittxnvCHFB6svm5.mTRtLRCym0wKRXnwkEbz.K66g1aLbhC', 'activo', '2026-06-20 10:02:00'),
+  (7,  'Jorge Eliécer',   'Moreno Díaz',      'CC', '1000000007', 'jorge.moreno@example.com',    '3000000007', '$2b$10$pW2M8vittxnvCHFB6svm5.mTRtLRCym0wKRXnwkEbz.K66g1aLbhC', 'activo', '2026-06-21 14:30:00'),
+  (8,  'Diana Marcela',   'Ortiz Cárdenas',   'CC', '1000000008', 'diana.ortiz@example.com',     '3000000008', '$2b$10$pW2M8vittxnvCHFB6svm5.mTRtLRCym0wKRXnwkEbz.K66g1aLbhC', 'activo', '2026-06-22 08:45:00'),
+  (9,  'Luis Fernando',   'Castro Vargas',    'CC', '1000000009', 'luis.castro@example.com',     '3000000009', '$2b$10$pW2M8vittxnvCHFB6svm5.mTRtLRCym0wKRXnwkEbz.K66g1aLbhC', 'activo', '2026-06-25 19:10:00'),
+  (10, 'Sandra Patricia', 'Rojas León',       'CC', '1000000010', 'sandra.rojas@example.com',    '3000000010', '$2b$10$pW2M8vittxnvCHFB6svm5.mTRtLRCym0wKRXnwkEbz.K66g1aLbhC', 'activo', '2026-06-26 11:20:00'),
+  (11, 'Héctor Fabio',    'Mosquera Riascos', 'CC', '1000000011', 'hector.mosquera@example.com', '3000000011', '$2b$10$pW2M8vittxnvCHFB6svm5.mTRtLRCym0wKRXnwkEbz.K66g1aLbhC', 'activo', '2026-06-18 16:00:00'),
+  (12, 'Paola Andrea',    'Valencia Cuero',   'CC', '1000000012', 'paola.valencia@example.com',  '3000000012', '$2b$10$pW2M8vittxnvCHFB6svm5.mTRtLRCym0wKRXnwkEbz.K66g1aLbhC', 'activo', '2026-06-19 09:40:00'),
+  (13, 'Óscar Iván',      'Quintero Lozano',  'CC', '1000000013', 'oscar.quintero@example.com',  '3000000013', '$2b$10$pW2M8vittxnvCHFB6svm5.mTRtLRCym0wKRXnwkEbz.K66g1aLbhC', 'activo', '2026-07-02 13:25:00'),
+  (14, 'Gloria Inés',     'Arboleda Muñoz',   'CC', '1000000014', 'gloria.arboleda@example.com', '3000000014', '$2b$10$pW2M8vittxnvCHFB6svm5.mTRtLRCym0wKRXnwkEbz.K66g1aLbhC', 'activo', '2026-07-03 17:50:00'),
+  (15, 'Administrador',   'JAC Connect',      'CC', '1000000015', 'admin@example.com',           NULL,         '$2b$10$pW2M8vittxnvCHFB6svm5.mTRtLRCym0wKRXnwkEbz.K66g1aLbhC', 'activo', '2026-06-01 08:00:00');
 
 -- -------------------------------------------------------------
 -- Rol de cada usuario (uno por usuario)

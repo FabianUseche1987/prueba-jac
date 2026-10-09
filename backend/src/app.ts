@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import saludRoutes from './routes/salud.routes';
 import juntasRoutes from './routes/juntas.routes';
+import authRoutes from './routes/auth.routes';
 import { manejarErrores, rutaNoEncontrada } from './middlewares/errores';
 
 const app = express();
@@ -15,6 +16,7 @@ app.use(express.json());
 // Rutas de la API
 app.use('/api/salud', saludRoutes);
 app.use('/api/juntas', juntasRoutes);
+app.use('/api/auth', authRoutes);
 
 // Siempre al final: ruta no encontrada y manejo de errores
 app.use(rutaNoEncontrada);

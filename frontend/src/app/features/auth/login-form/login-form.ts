@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth.service';
-import { USUARIOS_MOCK } from '../data/usuarios.mock';
 
 // Formulario de inicio de sesión reutilizable (hoy se usa en el inicio).
 @Component({
@@ -17,29 +17,37 @@ export class LoginForm {
   private readonly auth = inject(AuthService);
 
   verContrasena = false;
-  credencialesIncorrectas = false;
-
-  // Se muestra en pantalla para que se pueda probar el login
-  usuarioDemo = USUARIOS_MOCK[0];
+  ingresando = false;
+  errorLogin = '';
 
   form = this.fb.nonNullable.group({
-    usuario: ['', Validators.required],
+    correo: ['', [Validators.required, Validators.email]],
     contrasena: ['', Validators.required],
   });
 
   ingresar() {
-    this.credencialesIncorrectas = false;
+    this.errorLogin = '';
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    const { usuario, contrasena } = this.form.getRawValue();
-    if (this.auth.login(usuario, contrasena)) {
-      this.router.navigate(['/juntas']);
-    } else {
-      this.credencialesIncorrectas = true;
-    }
+    this.ingresando = true;
+    const { correo, contrasena } = this.form.getRawValue();
+
+    this.auth.login(correo, contrasena).subscribe({
+      next: () => {
+        this.ingresando = false;
+        this.router.navigate(['/juntas']);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.ingresando = false;
+        this.errorLogin =
+          err.status === 0
+            ? 'No hay conexión con el servidor. Intenta de nuevo en un momento.'
+            : (err.error?.mensaje ?? 'No se pudo iniciar sesión.');
+      },
+    });
   }
 }

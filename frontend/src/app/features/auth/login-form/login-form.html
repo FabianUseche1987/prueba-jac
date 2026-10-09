@@ -1,15 +1,21 @@
 <form [formGroup]="form" (ngSubmit)="ingresar()" novalidate>
   <div class="mb-3">
-    <label for="usuario" class="form-label">Usuario</label>
+    <label for="correo" class="form-label">Correo electrónico</label>
     <input
-      id="usuario"
-      type="text"
+      id="correo"
+      type="email"
       class="form-control"
-      formControlName="usuario"
+      formControlName="correo"
       autocomplete="username"
-      [class.is-invalid]="form.controls.usuario.invalid && form.controls.usuario.touched"
+      [class.is-invalid]="form.controls.correo.invalid && form.controls.correo.touched"
     />
-    <div class="invalid-feedback">Ingresa tu usuario</div>
+    <div class="invalid-feedback">
+      @if (form.controls.correo.hasError('required')) {
+        Ingresa tu correo
+      } @else {
+        Escribe un correo válido
+      }
+    </div>
   </div>
 
   <div class="mb-2">
@@ -39,18 +45,18 @@
     <a routerLink="/recuperar-contrasena" class="login-form-link small">¿Olvidaste tu contraseña?</a>
   </div>
 
-  @if (credencialesIncorrectas) {
+  <!-- Mensaje de la API: correo o contraseña incorrectos, cuenta inactiva, sin conexión... -->
+  @if (errorLogin) {
     <div class="alert alert-danger py-2 small" role="alert">
-      <i class="bi bi-exclamation-circle me-1"></i>Usuario o contraseña incorrectos
+      <i class="bi bi-exclamation-circle me-1"></i>{{ errorLogin }}
     </div>
   }
 
-  <button type="submit" class="btn btn-jac rounded-pill w-100">Ingresar</button>
-
-  <!-- Usuario de prueba: quitar este bloque cuando exista el backend -->
-  <div class="alert alert-danger small mt-3 mb-0">
-    <strong style="color: #dc3545;">Profe por favor use este usuario de prueba</strong><br />
-    Usuario: {{ usuarioDemo.email }}<br />
-    Contraseña: {{ usuarioDemo.contrasena }}
-  </div>
+  <button type="submit" class="btn btn-jac rounded-pill w-100" [disabled]="ingresando">
+    @if (ingresando) {
+      <span class="spinner-border spinner-border-sm me-1"></span>Ingresando…
+    } @else {
+      Ingresar
+    }
+  </button>
 </form>

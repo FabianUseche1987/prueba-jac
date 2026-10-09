@@ -29,7 +29,7 @@ A partir de aquí se construye la **versión real** (backend, base de datos, aut
 | Base de datos | Corregida con la migración 001 (Fase 0) |
 | Backend | Funcionando: `/api/salud` y el CRUD de `/api/juntas` (Fases 1 y 2) |
 | Pantalla de juntas | **Conectada a la BD**: listar, registrar, editar y eliminar (Fase 2 terminada) |
-| Login | Sigue con el usuario mock (se cambia en la Fase 3) |
+| Login | **Real**: con correo y contraseña contra la BD, con token JWT (Fase 3). El usuario mock se eliminó |
 
 ## 3. Tecnologías
 
@@ -52,7 +52,9 @@ jacConnect/
 │       ├── env.ts                # carga el .env
 │       ├── app.ts                # configura Express: cors, JSON, rutas, errores
 │       ├── db.ts                 # pool de conexiones a MariaDB
-│       ├── models/               # forma de los datos y conversión BD → JSON (junta.model.ts…)
+│       ├── seguridad.ts          # bcrypt (contraseñas) y JWT (tokens de sesión)
+│       ├── scripts/              # tareas sueltas: cifrar-contrasenas.ts
+│       ├── models/               # forma de los datos y conversión BD → JSON (junta.model.ts, usuario.model.ts…)
 │       ├── routes/               # qué URL atiende cada módulo (salud.routes.ts, juntas.routes.ts…)
 │       ├── controllers/          # qué hace cada endpoint (salud.controller.ts, juntas.controller.ts…)
 │       └── middlewares/          # errores.ts: 404 y errores en JSON
@@ -74,13 +76,12 @@ jacConnect/
 │           ├── features/
 │           │   ├── inicio/                    # página de inicio (con el login)
 │           │   ├── auth/
-│           │   │   ├── auth.service.ts        # sesión del usuario (hoy contra el mock)
+│           │   │   ├── auth.service.ts        # login contra la API; guarda token y usuario
 │           │   │   ├── auth.guard.ts          # protege rutas que requieren sesión
 │           │   │   ├── login-form/            # formulario de login reutilizable
 │           │   │   ├── registro/
 │           │   │   ├── recuperar-contrasena/
-│           │   │   ├── models/usuario.model.ts
-│           │   │   └── data/usuarios.mock.ts  # usuario de prueba (se borra en la Fase 3)
+│           │   │   └── models/usuario.model.ts
 │           │   └── juntas/
 │           │       ├── juntas.service.ts      # llama a la API /api/juntas
 │           │       ├── consulta-juntas/       # tabla + paginación
@@ -124,6 +125,17 @@ La estructura oficial está en `database/schema.sql`. Todo cambio a la base de d
 | Migración | Fecha | Notas |
 |---|---|---|
 | `001_correcciones_fase0.sql` | 2026-10-09 | Aplicada con respaldo previo. Para entonces, Hostinger ya no era igual al *dump* del 26 de septiembre: tenía 3 juntas, ya no tenía el proyecto "Escuela de fútbol infantil" (con sus avances y calificaciones) y los estados ya estaban en texto |
+| Script `npm run cifrar-contrasenas` | 2026-10-09 | Cifró con bcrypt las 15 contraseñas que estaban en texto plano. Se puede repetir sin problema: salta las que ya están cifradas |
+
+**Usuarios de prueba en Hostinger** (para iniciar sesión en la app):
+
+| Correo | Contraseña | Perfil |
+|---|---|---|
+| `admin@example.com` | `Jac2026*` | Administrador (sin junta) |
+| `carlos.ramirez@example.com` | `123456` | Directivo: Secretario de la junta 1 |
+| `luis.castro@example.com` | `123456` | Ciudadano de la junta 1 |
+
+Las cuentas del equipo que ya existían en Hostinger también tienen la contraseña `123456`. Cuando exista "Mi perfil" (paso 5.7), cada quien debe cambiarla. En una base creada con `seed.sql`, la contraseña de todos los usuarios es `Jac2026*`.
 
 Recuerda: **todos trabajan sobre la misma base**. Lo que uno borre, se pierde para todos. Antes de un `DELETE` o `UPDATE`, piénsalo dos veces y, si es algo grande, haz un respaldo.
 
@@ -176,6 +188,8 @@ Reglas:
 | 2026-10-09 | **`main` no se toca**: Hostinger la publica automáticamente y contiene la versión de la profesora. El desarrollo real va en ramas `feature/...` sin unirse a `main` (sección 12) |
 | 2026-10-09 | **Una junta con datos relacionados no se elimina** (la API responde 409): borrarla eliminaría en cascada sus usuarios, reuniones, proyectos, bienes y avisos. En ese caso se marca como inactiva |
 | 2026-10-09 | Después de guardar o eliminar, el frontend vuelve a pedir la lista a la API, para mostrar siempre lo que hay en la BD |
+| 2026-10-09 | **Login real**: con correo y contraseña. La API responde un token JWT que dura 8 horas (lleva `idUsuario`, `perfil` e `idJunta`) y el frontend lo guarda en `sessionStorage`. Si el correo no existe o la contraseña está mal, el mensaje es el mismo, para no revelar qué correos están registrados |
+| 2026-10-09 | Contraseñas con bcrypt (10 rondas). El código de seguridad está en `backend/src/seguridad.ts` |
 
 ## 9. Problemas del esquema y cómo se resolvieron
 
@@ -228,6 +242,7 @@ Para comprobar que funciona, abre `http://localhost:3000/api/salud` en el navega
 | `npm run revisar` | Revisa errores de TypeScript sin ejecutar |
 | `npm run build` | Compila a JavaScript en `dist/` |
 | `npm start` | Ejecuta la versión compilada (la que se usará al publicar) |
+| `npm run cifrar-contrasenas` | Cifra con bcrypt las contraseñas que estén en texto plano en la BD |
 
 **Cómo viaja una petición en el backend:**
 
@@ -244,6 +259,7 @@ Ejemplo: `GET /api/salud` → `salud.routes.ts` → `obtenerSalud()` en `salud.c
 | `feature/fase0-base-datos` | Documentación y scripts de base de datos | Ya en GitHub |
 | `feature/fase1-backend-base` | Backend base (sale de la rama de la Fase 0) | Cada fase nueva sale de la rama de la fase anterior |
 | `feature/fase2-juntas` | Juntas conectadas a la BD: CRUD completo (sale de la rama de la Fase 1) | Terminada |
+| `feature/fase3-auth` | Login, protección de la API y registro reales (sale de la rama de la Fase 2) | En curso |
 
 Reglas:
 
