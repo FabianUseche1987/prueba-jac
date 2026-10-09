@@ -45,6 +45,20 @@
                 Reuniones
               </a>
             </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                routerLink="/avisos"
+                routerLinkActive="active"
+                (click)="cerrarMenu()"
+                [attr.aria-label]="'Avisos, ' + avisos.noLeidos() + ' sin leer'"
+              >
+                <i class="bi bi-bell me-1"></i>Avisos
+                @if (avisos.noLeidos() > 0) {
+                  <span class="badge rounded-pill text-bg-danger">{{ avisos.noLeidos() }}</span>
+                }
+              </a>
+            </li>
           }
           <li class="nav-item">
             <span class="navbar-text">

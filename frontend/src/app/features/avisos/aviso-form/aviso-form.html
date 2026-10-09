@@ -1,0 +1,103 @@
+<!-- Fondo oscuro detrás del modal -->
+<div class="modal-backdrop show"></div>
+
+<div class="modal d-block" role="dialog" aria-modal="true" aria-labelledby="aviso-form-titulo">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <form [formGroup]="form" (ngSubmit)="enviar()" novalidate>
+        <div class="modal-header">
+          <h2 class="modal-title fs-5" id="aviso-form-titulo">
+            <i class="bi bi-megaphone me-2"></i>Publicar aviso
+          </h2>
+          <button type="button" class="btn-close" aria-label="Cerrar" (click)="cancelar.emit()"></button>
+        </div>
+
+        <div class="modal-body">
+          @if (error()) {
+            <div class="alert alert-danger py-2 small" role="alert">
+              <i class="bi bi-exclamation-circle me-1"></i>{{ error() }}
+            </div>
+          }
+
+          <div class="row g-3">
+            <div class="col-12">
+              <label for="titulo" class="form-label">Título <span class="text-danger">*</span></label>
+              <input
+                id="titulo"
+                type="text"
+                class="form-control"
+                formControlName="titulo"
+                maxlength="200"
+                placeholder="Ej: Convocatoria a la asamblea de noviembre"
+                [class.is-invalid]="invalido('titulo')"
+              />
+              <div class="invalid-feedback">Escribe el título del aviso</div>
+            </div>
+
+            <div class="col-12">
+              <label for="mensaje" class="form-label">Mensaje <span class="text-danger">*</span></label>
+              <textarea
+                id="mensaje"
+                class="form-control"
+                rows="4"
+                formControlName="mensaje"
+                maxlength="2000"
+                [class.is-invalid]="invalido('mensaje')"
+              ></textarea>
+              <div class="invalid-feedback">Escribe el mensaje</div>
+              <div class="form-text text-end">{{ form.controls.mensaje.value.length }} / 2000</div>
+            </div>
+
+            <div class="col-md-4">
+              <label for="tipo" class="form-label">Tipo</label>
+              <select id="tipo" class="form-select" formControlName="tipo">
+                @for (tipo of tipos; track tipo.valor) {
+                  <option [value]="tipo.valor">{{ tipo.texto }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label for="prioridad" class="form-label">Prioridad</label>
+              <select id="prioridad" class="form-select" formControlName="prioridad">
+                @for (prioridad of prioridades; track prioridad.valor) {
+                  <option [value]="prioridad.valor">{{ prioridad.texto }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label for="audiencia" class="form-label">¿Quién lo ve?</label>
+              <select id="audiencia" class="form-select" formControlName="audiencia">
+                @for (audiencia of audiencias; track audiencia.valor) {
+                  <option [value]="audiencia.valor">{{ audiencia.texto }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label for="fechaExpiracion" class="form-label">Vigente hasta</label>
+              <input id="fechaExpiracion" type="datetime-local" class="form-control" formControlName="fechaExpiracion" />
+              <div class="form-text">Opcional. Después de esta fecha el aviso deja de mostrarse.</div>
+            </div>
+          </div>
+
+          <div class="small text-body-secondary mt-3"><span class="text-danger">*</span> Campos obligatorios</div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary rounded-pill px-4" (click)="cancelar.emit()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-jac rounded-pill px-4" [disabled]="guardando()">
+            @if (guardando()) {
+              <span class="spinner-border spinner-border-sm me-1"></span>Publicando…
+            } @else {
+              Publicar
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

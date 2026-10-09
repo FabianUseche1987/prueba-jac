@@ -4,6 +4,7 @@ import saludRoutes from './routes/salud.routes';
 import juntasRoutes from './routes/juntas.routes';
 import authRoutes from './routes/auth.routes';
 import reunionesRoutes from './routes/reuniones.routes';
+import avisosRoutes from './routes/avisos.routes';
 import { manejarErrores, rutaNoEncontrada } from './middlewares/errores';
 import { requiereRol, verificarToken } from './middlewares/autenticacion';
 
@@ -24,6 +25,7 @@ app.use('/api/auth', authRoutes);
 //   requiereRol    -> 403 si el perfil no tiene permiso
 app.use('/api/juntas', verificarToken, requiereRol('administrador'), juntasRoutes);
 app.use('/api/reuniones', verificarToken, requiereRol('directivo', 'ciudadano'), reunionesRoutes);
+app.use('/api/avisos', verificarToken, requiereRol('directivo', 'ciudadano'), avisosRoutes);
 
 // Siempre al final: ruta no encontrada y manejo de errores
 app.use(rutaNoEncontrada);

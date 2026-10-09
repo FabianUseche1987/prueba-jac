@@ -19,3 +19,13 @@ export const pool = mysql.createPool({
   connectionLimit: 5,  // Hostinger limita las conexiones; con 5 por persona es suficiente
   dateStrings: true,   // fechas como texto 'AAAA-MM-DD', igual que en el frontend
 });
+
+// Hora de Colombia (UTC-5, sin horario de verano).
+// El servidor de Hostinger trabaja en UTC; cada conexión nueva se pasa a hora de
+// Colombia para que NOW() y las columnas TIMESTAMP (fecha_envio, fecha_registro...)
+// se lean y comparen en hora local.
+export const ZONA_HORARIA = '-05:00';
+
+pool.pool.on('connection', (conexion) => {
+  conexion.query(`SET time_zone = '${ZONA_HORARIA}'`);
+});

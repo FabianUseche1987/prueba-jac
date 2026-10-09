@@ -158,7 +158,11 @@ Todos siguen el mismo patrón:
   - [x] Convocar y editar (solo directivos): `POST` y `PUT /api/reuniones` con `requiereRol('directivo')`; al editar se puede cambiar el estado (programada, realizada o cancelada) y escribir el acta. Una reunión de otra junta responde 404
   - [x] Asistencia y quórum: `GET` y `PUT /api/reuniones/:id/asistencia`, solo directivos y en una transacción. Modal con un interruptor por miembro, hora de llegada o justificación, y quórum en vivo. Todos ven en la tarjeta "Asistieron 6 de 5 requeridos · Hubo quórum ✔"
 - [ ] **5.2** **Proyectos** y avances, con comentarios y calificaciones (`proyecto`, `avance_proyecto`, `comentario`, `calificacion`)
-- [ ] **5.3** **Avisos** y la campana de no leídos (`notificacion`, `notificacion_usuario`)
+- [x] **5.3** **Avisos** y la campana de no leídos (`notificacion`, `notificacion_usuario`). Rama `feature/fase5-avisos`. *(Terminado el 2026-10-09.)*
+  - [x] Ver: `GET /api/avisos` y la página `/avisos`, un "muro" de tarjetas con un borde de color según la prioridad y los no leídos resaltados. Filtros "Todos" y "Sin leer". Los avisos "Solo directivos" no les llegan a los ciudadanos y los vencidos ya no se muestran
+  - [x] Campana en el menú con el número de no leídos (`GET /api/avisos/no-leidos`), que se actualiza al cambiar de página. Marcar uno (`PUT /api/avisos/:id/leido`) o todos (`PUT /api/avisos/leidos`) como leídos
+  - [x] Publicar y eliminar (solo directivos): `POST` y `DELETE /api/avisos` con `requiereRol('directivo')`. Modal con título, mensaje, tipo, prioridad, quién lo ve y fecha de vencimiento opcional. Eliminar pide confirmación. Un aviso de otra junta responde 404
+  - [x] Hora de Colombia en la BD: el *pool* usa `SET time_zone = '-05:00'` y la migración 002 corrigió la hora de los avisos de prueba
 - [ ] **5.4** **Junta directiva**: afiliados y cargos (`usuario_rol`, `rol`)
 - [ ] **5.5** **Bienes comunales** (`predio`)
 - [ ] **5.6** **Documentos**, con subida de archivos (`documento`)

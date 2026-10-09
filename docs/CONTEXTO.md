@@ -34,6 +34,7 @@ A partir de aquí se construye la **versión real** (backend, base de datos, aut
 | Seguridad de la API | Todo, salvo `/api/salud` y `/api/auth`, exige un token válido (Fase 3) |
 | Roles | La gestión de juntas es solo para el administrador, en la API (403) y en la pantalla. Directivos y ciudadanos ven su cargo y su junta en el inicio (Fase 4) |
 | Reuniones | Directivos y ciudadanos ven las reuniones **de su junta** en `/reuniones` y si hubo quórum; los directivos convocan, editan (estado y acta) y toman asistencia (Fase 5.1 terminada) |
+| Avisos | Muro de avisos de la junta en `/avisos` y campana con los no leídos en el menú. Todos marcan como leído; los directivos publican y eliminan (Fase 5.3 terminada) |
 
 ## 3. Tecnologías
 
@@ -55,7 +56,7 @@ jacConnect/
 │       ├── index.ts              # arranca el servidor
 │       ├── env.ts                # carga el .env
 │       ├── app.ts                # configura Express: cors, JSON, rutas, errores
-│       ├── db.ts                 # pool de conexiones a MariaDB
+│       ├── db.ts                 # pool de conexiones a MariaDB (en hora de Colombia, -05:00)
 │       ├── seguridad.ts          # bcrypt (contraseñas) y JWT (tokens de sesión)
 │       ├── validaciones.ts       # textoLimpio, revisarLargo, esFechaValida... (las usan los modelos)
 │       ├── scripts/              # tareas sueltas: cifrar-contrasenas.ts
@@ -67,7 +68,8 @@ jacConnect/
 │   ├── schema.sql                # estructura completa (crea la BD desde cero, ¡borra todo!)
 │   ├── seed.sql                  # datos de prueba inventados (un usuario por rol)
 │   └── migraciones/              # cambios para la BD que ya existe en Hostinger (sin borrar datos)
-│       └── 001_correcciones_fase0.sql
+│       ├── 001_correcciones_fase0.sql
+│       └── 002_hora_colombia_avisos.sql
 ├── docs/
 │   ├── CONTEXTO.md               # este archivo
 │   └── PLAN_DE_TRABAJO.md
@@ -95,6 +97,11 @@ jacConnect/
 │           │   │   ├── reunion-form/          # modal para convocar / editar (directivos)
 │           │   │   ├── asistencia-modal/      # modal para tomar asistencia (directivos)
 │           │   │   └── models/reunion.model.ts
+│           │   ├── avisos/
+│           │   │   ├── avisos.service.ts      # llama a la API /api/avisos; guarda el número de no leídos (campana)
+│           │   │   ├── lista-avisos/          # página /avisos: muro de tarjetas y filtros
+│           │   │   ├── aviso-form/            # modal para publicar un aviso (directivos)
+│           │   │   └── models/aviso.model.ts
 │           │   └── juntas/
 │           │       ├── juntas.service.ts      # llama a la API /api/juntas
 │           │       ├── consulta-juntas/       # tabla + paginación
@@ -141,6 +148,7 @@ La estructura oficial está en `database/schema.sql`. Todo cambio a la base de d
 |---|---|---|
 | `001_correcciones_fase0.sql` | 2026-10-09 | Aplicada con respaldo previo. Para entonces, Hostinger ya no era igual al *dump* del 26 de septiembre: tenía 3 juntas, ya no tenía el proyecto "Escuela de fútbol infantil" (con sus avances y calificaciones) y los estados ya estaban en texto |
 | Script `npm run cifrar-contrasenas` | 2026-10-09 | Cifró con bcrypt las 15 contraseñas que estaban en texto plano. Se puede repetir sin problema: salta las que ya están cifradas |
+| `002_hora_colombia_avisos.sql` | 2026-10-09 | Corrigió la hora de envío y de vencimiento de los 4 avisos de prueba, que se veían 5 horas antes (ver la decisión sobre la zona horaria en la sección 8). El aviso 3 ahora vence el 31 de octubre |
 
 **Usuarios de prueba en Hostinger** (para iniciar sesión en la app):
 
@@ -215,6 +223,10 @@ Reglas:
 | 2026-10-09 | Código repetido a archivos compartidos: en el backend, las validaciones van en `validaciones.ts`; en el frontend, los mensajes de error de la API salen de `shared/utils/mensaje-error.ts` |
 | 2026-10-09 | Las reuniones no se eliminan: se marcan como **canceladas** (queda el registro de que se convocaron) |
 | 2026-10-09 | **Asistencia**: la lista con nombres, horas y justificaciones solo la ven los directivos (las justificaciones pueden ser privadas). Todos ven el resultado: cuántos asistieron y si hubo quórum. Solo se puede registrar a miembros activos de la junta |
+| 2026-10-09 | **Zona horaria**: el servidor de Hostinger está en hora UTC, y las columnas `TIMESTAMP` se convierten según la zona de la conexión. Por eso `db.ts` pone cada conexión en hora de Colombia (`SET time_zone = '-05:00'`) y `seed.sql` hace lo mismo al empezar. Si ejecutas SQL con fechas en phpMyAdmin o Workbench, escribe antes `SET time_zone = '-05:00';` |
+| 2026-10-09 | **Avisos leídos**: si un usuario no tiene fila en `notificacion_usuario` para un aviso, ese aviso está **sin leer**. Al marcarlo se crea la fila (o se actualiza). Así, publicar un aviso no obliga a crear una fila por cada miembro. Al que lo publica, su propio aviso le queda como leído |
+| 2026-10-09 | Los avisos **sí se pueden eliminar** (a diferencia de las reuniones): un aviso es un mensaje, no un registro oficial. Con el aviso se borran sus lecturas |
+| 2026-10-09 | Un aviso con audiencia "Solo directivos" no les llega a los ciudadanos, ni en la lista ni en la campana. Los avisos vencidos (`fecha_expiracion` pasada) dejan de mostrarse a todos |
 
 ## 9. Problemas del esquema y cómo se resolvieron
 
@@ -287,6 +299,7 @@ Ejemplo: `GET /api/salud` → `salud.routes.ts` → `obtenerSalud()` en `salud.c
 | `feature/fase3-auth` | Login, protección de la API y registro reales (sale de la rama de la Fase 2) | Terminada |
 | `feature/fase4-roles` | Permisos por perfil (sale de la rama de la Fase 3) | Terminada |
 | `feature/fase5-reuniones` | Módulo de reuniones y asistencia (sale de la rama de la Fase 4) | Terminada |
+| `feature/fase5-avisos` | Módulo de avisos y campana de no leídos (sale de la rama de reuniones) | Terminada |
 
 Reglas:
 

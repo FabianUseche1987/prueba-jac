@@ -16,6 +16,11 @@
 
 SET NAMES utf8mb4;
 
+-- Las fechas de este archivo están en hora de Colombia. Sin esta línea,
+-- las columnas TIMESTAMP las tomarían como hora UTC (la del servidor)
+-- y en la aplicación se verían 5 horas antes.
+SET time_zone = '-05:00';
+
 -- -------------------------------------------------------------
 -- Roles
 -- -------------------------------------------------------------

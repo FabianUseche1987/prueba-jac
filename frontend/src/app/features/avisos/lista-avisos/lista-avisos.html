@@ -1,0 +1,142 @@
+<section class="avisos-page py-5">
+  <div class="container">
+    <!-- Título a la izquierda; "Publicar aviso" a la derecha (solo directivos) -->
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+      <div>
+        <h1 class="h3 fw-bold avisos-titulo">Avisos</h1>
+        <p class="text-body-secondary mb-0">
+          Comunicados de {{ auth.usuario()?.nombreJunta ?? 'tu junta' }}
+        </p>
+      </div>
+
+      @if (auth.esDirectivo()) {
+        <button type="button" class="btn btn-jac rounded-pill px-4" (click)="publicar()">
+          <i class="bi bi-megaphone me-1"></i>Publicar aviso
+        </button>
+      }
+    </div>
+
+    <!-- Aviso de éxito o error -->
+    @if (aviso) {
+      <div class="alert d-flex align-items-center" [class.alert-success]="aviso.tipo === 'success'" [class.alert-danger]="aviso.tipo === 'danger'" role="alert">
+        <i class="bi me-2" [class.bi-check-circle]="aviso.tipo === 'success'" [class.bi-exclamation-triangle]="aviso.tipo === 'danger'"></i>
+        <span class="me-auto">{{ aviso.texto }}</span>
+        <button type="button" class="btn-close" aria-label="Cerrar aviso" (click)="aviso = null"></button>
+      </div>
+    }
+
+    <!-- Filtro: todos / sin leer -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+      <div class="btn-group" role="group" aria-label="Filtrar avisos">
+        <button type="button" class="btn btn-sm" [class.btn-primary]="filtro === 'todos'" [class.btn-outline-primary]="filtro !== 'todos'" (click)="filtro = 'todos'">
+          Todos ({{ avisos.length }})
+        </button>
+        <button type="button" class="btn btn-sm" [class.btn-primary]="filtro === 'sinLeer'" [class.btn-outline-primary]="filtro !== 'sinLeer'" (click)="filtro = 'sinLeer'">
+          Sin leer ({{ sinLeer }})
+        </button>
+      </div>
+
+      @if (sinLeer > 0) {
+        <button type="button" class="btn btn-sm btn-link" (click)="marcarTodosLeidos()">
+          <i class="bi bi-check2-all me-1"></i>Marcar todos como leídos
+        </button>
+      }
+    </div>
+
+    @if (cargando) {
+      <div class="text-center text-body-secondary py-5">
+        <span class="spinner-border spinner-border-sm text-primary me-2"></span>Cargando avisos…
+      </div>
+    } @else if (error) {
+      <div class="alert alert-danger d-flex align-items-center" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        <span class="me-auto">{{ error }}</span>
+        <button type="button" class="btn btn-sm btn-outline-danger rounded-pill" (click)="cargarAvisos()">Reintentar</button>
+      </div>
+    } @else {
+      @for (item of avisosFiltrados; track item.idAviso) {
+        <div
+          class="card border-0 shadow-sm mb-3 aviso-card"
+          [class.aviso-alta]="item.prioridad === 'alta'"
+          [class.aviso-media]="item.prioridad === 'media'"
+          [class.aviso-baja]="item.prioridad === 'baja'"
+          [class.aviso-no-leido]="!item.leido"
+        >
+          <div class="card-body d-flex gap-3">
+            <div class="aviso-icono">
+              <i [class]="'bi ' + iconoTipo(item.tipo)"></i>
+            </div>
+
+            <div class="flex-grow-1">
+              <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                @if (!item.leido) {
+                  <span class="badge rounded-pill text-bg-primary">Nuevo</span>
+                }
+                <span [class]="'badge rounded-pill ' + clasePrioridad(item.prioridad)">Prioridad {{ item.prioridad }}</span>
+                @if (item.audiencia === 'directivos') {
+                  <span class="badge rounded-pill text-bg-dark"><i class="bi bi-lock me-1"></i>Solo directivos</span>
+                }
+
+                @if (auth.esDirectivo()) {
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-danger border-0 ms-auto"
+                    title="Eliminar"
+                    aria-label="Eliminar aviso"
+                    (click)="avisoAEliminar = item"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </button>
+                }
+              </div>
+
+              <h2 class="h5 fw-bold avisos-titulo mb-1">{{ item.titulo }}</h2>
+              <p class="aviso-mensaje text-body mb-2">{{ item.mensaje }}</p>
+
+              <div class="small text-body-secondary d-flex flex-wrap align-items-center gap-3">
+                <span><i class="bi bi-person me-1"></i>{{ item.remitente }}</span>
+                <span><i class="bi bi-clock me-1"></i>{{ item.fechaEnvio | date: "d 'de' MMMM, h:mm a" }}</span>
+                @if (item.fechaExpiracion) {
+                  <span><i class="bi bi-hourglass-split me-1"></i>Vigente hasta {{ item.fechaExpiracion | date: "d 'de' MMMM, h:mm a" }}</span>
+                }
+                @if (!item.leido) {
+                  <button type="button" class="btn btn-link btn-sm p-0 ms-auto" (click)="marcarLeido(item)">
+                    <i class="bi bi-check2 me-1"></i>Marcar como leído
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      } @empty {
+        <div class="text-center text-body-secondary py-5">
+          <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+          @if (filtro === 'sinLeer') {
+            ¡Estás al día! No tienes avisos sin leer.
+          } @else {
+            Tu junta todavía no ha publicado avisos.
+          }
+        </div>
+      }
+    }
+  </div>
+</section>
+
+<!-- Publicar aviso (se crea de nuevo cada vez que se abre) -->
+@if (formularioAbierto) {
+  <app-aviso-form
+    [guardando]="guardando"
+    [error]="errorFormulario"
+    (guardar)="guardarAviso($event)"
+    (cancelar)="formularioAbierto = false"
+  />
+}
+
+<!-- Confirmar eliminación (modal compartido) -->
+<app-modal-confirmar
+  [abierto]="avisoAEliminar !== null"
+  titulo="Eliminar aviso"
+  [mensaje]="'¿Seguro que deseas eliminar el aviso ' + avisoAEliminar?.titulo + '? Nadie podrá volver a verlo.'"
+  (confirmar)="confirmarEliminar()"
+  (cancelar)="avisoAEliminar = null"
+/>
