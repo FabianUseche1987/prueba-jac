@@ -6,7 +6,8 @@
 
 - Las fases van **en orden**. No se empieza una fase hasta cumplir el **"Listo cuando"** de la anterior.
 - Al terminar un paso, márcalo con `[x]`.
-- Cada paso va en **su propia rama** (por ejemplo `feature/fase1-backend-base`) y se une a `main` con un *pull request* pequeño.
+- Cada fase va en **su propia rama** (por ejemplo `feature/fase1-backend-base`).
+- **Nunca se une nada a `main`**: Hostinger publica `main` automáticamente y ahí está la versión presentada a la profesora (ver sección 12 de `CONTEXTO.md`).
 - Si en un paso se toma una decisión, se anota en la sección 8 de `CONTEXTO.md`.
 
 ---

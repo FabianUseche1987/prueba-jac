@@ -14,3 +14,4 @@ Equipo de 4 personas que está aprendiendo. Antes de trabajar, lee el contexto y
 - Frontend: preferir clases de Bootstrap a CSS propio; reutilizar `.btn-jac`, `<app-modal-confirmar>` y `<app-login-form>`.
 - Base de datos: todo cambio va en un script nuevo en `database/migraciones/` y se refleja en `database/schema.sql`. Nunca cambios "a mano" sin script.
 - Seguridad: nunca escribir credenciales ni datos del servidor en archivos del repositorio. Van en `backend/.env`, que git ignora.
+- **Git: NUNCA hacer merge, push ni pull request hacia `main`.** `main` se publica automáticamente en Hostinger y contiene la versión presentada a la profesora. Se trabaja en ramas `feature/...` (ver sección 12 de `docs/CONTEXTO.md`).

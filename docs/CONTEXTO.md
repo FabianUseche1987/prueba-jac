@@ -162,6 +162,7 @@ Reglas:
 | 2026-10-09 | Se resolvieron los 10 problemas del esquema como indica la sección 9 |
 | 2026-10-09 | Backend en formato CommonJS (los `import` no llevan extensión `.js`); la BD se usa con un *pool* de `mysql2` y las fechas llegan como texto `'AAAA-MM-DD'`, igual que en el frontend |
 | 2026-10-09 | Se agregó `CLAUDE.md` en la raíz para que cualquier conversación con Claude Code arranque con este contexto y el plan |
+| 2026-10-09 | **`main` no se toca**: Hostinger la publica automáticamente y contiene la versión de la profesora. El desarrollo real va en ramas `feature/...` sin unirse a `main` (sección 12) |
 
 ## 9. Problemas del esquema y cómo se resolvieron
 
@@ -220,3 +221,18 @@ Para comprobar que funciona, abre `http://localhost:3000/api/salud` en el navega
 `index.ts` arranca → `app.ts` recibe la petición → `routes/` decide qué función la atiende → `controllers/` hace el trabajo (consulta la BD con `db.ts`) → responde un JSON. Si algo falla, `middlewares/errores.ts` responde el error en JSON.
 
 Ejemplo: `GET /api/salud` → `salud.routes.ts` → `obtenerSalud()` en `salud.controller.ts` → `SELECT 1` en la BD → `{ "ok": true }`.
+
+## 12. Cómo trabajamos con git
+
+| Rama / etiqueta | Qué contiene | Regla |
+|---|---|---|
+| `main` | La versión presentada a la profesora. **Hostinger la publica automáticamente** | **No se hace merge, push ni pull request hacia `main`.** Si algún día se quiere publicar una versión nueva, lo decide todo el equipo |
+| `version-profe` (etiqueta) | El commit `38039ab`, la demo con datos de prueba | Solo para consultarla: `git switch --detach version-profe` |
+| `feature/fase0-base-datos` | Documentación y scripts de base de datos | Ya en GitHub |
+| `feature/fase1-backend-base` | Backend base (sale de la rama de la Fase 0) | Cada fase nueva sale de la rama de la fase anterior |
+
+Reglas:
+
+- Cada fase en su propia rama `feature/faseN-...`, creada desde la rama de la fase anterior.
+- Commits pequeños y con un mensaje que diga qué se hizo.
+- Antes de cada commit, revisar que **no** se incluya `backend/.env`.
