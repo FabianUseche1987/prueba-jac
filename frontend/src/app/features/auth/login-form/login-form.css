@@ -1,0 +1,18 @@
+.form-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #1e3a6e;
+}
+
+.form-control {
+  border-color: #6c757d;
+}
+
+.login-form-link {
+  color: #1f5fd8;
+  text-decoration: none;
+}
+
+.login-form-link:hover {
+  text-decoration: underline;
+}

@@ -1,10 +1,10 @@
-/* Ocupa solo el espacio libre entre header y footer (sin scroll) */
+/* Ocupa solo el espacio libre entre header y footer */
 :host {
   flex: 1;
   display: flex;
 }
 
-.recuperar-page {
+.registro-page {
   flex: 1;
   display: flex;
   align-items: center;
@@ -12,15 +12,15 @@
   background: linear-gradient(180deg, #a9cdfa 0%, #d6e8fd 55%, #ffffff 100%);
 }
 
-.recuperar-card {
-  max-width: 420px;
+.registro-card {
+  max-width: 680px;
   background: #ffffff;
   border-radius: 2rem;
   padding: 2.5rem 2rem;
   box-shadow: 0 10px 30px rgba(31, 95, 216, 0.15);
 }
 
-.recuperar-icono {
+.registro-icono {
   width: 4rem;
   height: 4rem;
   display: flex;
@@ -32,26 +32,31 @@
   font-size: 1.75rem;
 }
 
-.recuperar-icono-ok {
+.registro-icono-ok {
   background: #e3f6e6;
   color: #2b9139;
 }
 
-.recuperar-titulo {
+.registro-titulo {
   color: #1e3a6e;
 }
 
-.recuperar-card .form-control {
-  text-align: center;
+.form-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #1e3a6e;
+}
+
+.registro-card .form-control,
+.registro-card .form-select {
   border-color: #6c757d;
 }
 
-.recuperar-link {
+.registro-link {
   color: #1f5fd8;
   text-decoration: none;
-  font-size: 0.95rem;
 }
 
-.recuperar-link:hover {
+.registro-link:hover {
   text-decoration: underline;
 }

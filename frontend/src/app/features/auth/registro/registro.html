@@ -1,0 +1,203 @@
+<section class="registro-page">
+  <div class="container">
+    <div class="registro-card mx-auto">
+      @if (!registrado()) {
+        <div class="text-center mb-4">
+          <div class="registro-icono mx-auto mb-3">
+            <i class="bi bi-person-plus"></i>
+          </div>
+          <h1 class="h4 fw-bold registro-titulo">Crea tu cuenta</h1>
+          <p class="text-body-secondary mb-0">
+            Regístrate para estar al tanto de la junta de tu comunidad.
+          </p>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="registrar()" novalidate>
+          <div class="row g-3">
+            <!-- Datos personales -->
+            <div class="col-md-6">
+              <label for="nombres" class="form-label">Nombres <span class="text-danger">*</span></label>
+              <input
+                id="nombres"
+                type="text"
+                class="form-control"
+                formControlName="nombres"
+                autocomplete="given-name"
+                [class.is-invalid]="invalido('nombres')"
+              />
+              <div class="invalid-feedback">Ingresa tus nombres</div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="apellidos" class="form-label">Apellidos <span class="text-danger">*</span></label>
+              <input
+                id="apellidos"
+                type="text"
+                class="form-control"
+                formControlName="apellidos"
+                autocomplete="family-name"
+                [class.is-invalid]="invalido('apellidos')"
+              />
+              <div class="invalid-feedback">Ingresa tus apellidos</div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="tipoDocumento" class="form-label">Tipo de documento <span class="text-danger">*</span></label>
+              <select id="tipoDocumento" class="form-select" formControlName="tipoDocumento">
+                @for (tipo of tiposDocumento; track tipo.valor) {
+                  <option [value]="tipo.valor">{{ tipo.texto }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label for="numeroDocumento" class="form-label">Número de documento <span class="text-danger">*</span></label>
+              <input
+                id="numeroDocumento"
+                type="text"
+                inputmode="numeric"
+                class="form-control"
+                formControlName="numeroDocumento"
+                [class.is-invalid]="invalido('numeroDocumento')"
+              />
+              <div class="invalid-feedback">
+                @if (form.controls.numeroDocumento.hasError('required')) {
+                  Ingresa tu número de documento
+                } @else {
+                  Solo números, entre 5 y 12 dígitos
+                }
+              </div>
+            </div>
+
+            <!-- Contacto -->
+            <div class="col-md-6">
+              <label for="correo" class="form-label">Correo electrónico <span class="text-danger">*</span></label>
+              <input
+                id="correo"
+                type="email"
+                class="form-control"
+                formControlName="correo"
+                autocomplete="email"
+                [class.is-invalid]="invalido('correo')"
+              />
+              <div class="invalid-feedback">
+                @if (form.controls.correo.hasError('required')) {
+                  Ingresa tu correo
+                } @else {
+                  Escribe un correo válido
+                }
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="celular" class="form-label">Celular <span class="text-danger">*</span></label>
+              <input
+                id="celular"
+                type="tel"
+                inputmode="numeric"
+                class="form-control"
+                formControlName="celular"
+                autocomplete="tel-national"
+                [class.is-invalid]="invalido('celular')"
+              />
+              <div class="invalid-feedback">
+                @if (form.controls.celular.hasError('required')) {
+                  Ingresa tu número de celular
+                } @else {
+                  Debe tener 10 dígitos
+                }
+              </div>
+            </div>
+
+            <!-- Contraseña -->
+            <div class="col-md-6">
+              <label for="contrasena" class="form-label">Contraseña <span class="text-danger">*</span></label>
+              <div class="input-group has-validation">
+                <input
+                  id="contrasena"
+                  [type]="verContrasena ? 'text' : 'password'"
+                  class="form-control"
+                  formControlName="contrasena"
+                  autocomplete="new-password"
+                  [class.is-invalid]="invalido('contrasena')"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  (click)="verContrasena = !verContrasena"
+                  [attr.aria-label]="verContrasena ? 'Ocultar contraseñas' : 'Mostrar contraseñas'"
+                >
+                  <i class="bi" [class.bi-eye]="!verContrasena" [class.bi-eye-slash]="verContrasena"></i>
+                </button>
+                <div class="invalid-feedback">
+                  @if (form.controls.contrasena.hasError('required')) {
+                    Ingresa una contraseña
+                  } @else {
+                    Mínimo 8 caracteres
+                  }
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="confirmarContrasena" class="form-label">Confirmar contraseña <span class="text-danger">*</span></label>
+              <input
+                id="confirmarContrasena"
+                [type]="verContrasena ? 'text' : 'password'"
+                class="form-control"
+                formControlName="confirmarContrasena"
+                autocomplete="new-password"
+                [class.is-invalid]="confirmacionInvalida()"
+              />
+              <div class="invalid-feedback">
+                @if (form.controls.confirmarContrasena.hasError('required')) {
+                  Confirma tu contraseña
+                } @else {
+                  Las contraseñas no coinciden
+                }
+              </div>
+            </div>
+
+            <div class="col-12">
+              <div class="form-check">
+                <input
+                  id="aceptaDatos"
+                  type="checkbox"
+                  class="form-check-input"
+                  formControlName="aceptaDatos"
+                  [class.is-invalid]="invalido('aceptaDatos')"
+                />
+                <label for="aceptaDatos" class="form-check-label small">
+                  Autorizo el tratamiento de mis datos personales. <span class="text-danger">*</span>
+                </label>
+                <div class="invalid-feedback">Debes aceptar para continuar</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="small text-body-secondary mt-3"><span class="text-danger">*</span> Campos obligatorios</div>
+
+          <div class="text-center mt-4">
+            <button type="submit" class="btn btn-jac rounded-pill px-5">Registrarme</button>
+          </div>
+        </form>
+
+        <p class="text-center text-body-secondary small mt-3 mb-0">
+          ¿Ya tienes cuenta? <a routerLink="/" class="registro-link">Inicia sesión</a>
+        </p>
+      } @else {
+        <div class="text-center">
+          <div class="registro-icono registro-icono-ok mx-auto mb-3">
+            <i class="bi bi-check-lg"></i>
+          </div>
+          <h1 class="h4 fw-bold registro-titulo">¡Cuenta creada!</h1>
+          <p class="text-body-secondary mb-4">
+            Listo, <strong>{{ form.controls.nombres.value }}</strong>. Tu cuenta fue creada y ya
+            puedes iniciar sesión en JAC Connect.
+          </p>
+          <a routerLink="/" class="btn btn-jac rounded-pill px-5">Iniciar sesión</a>
+        </div>
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,28 @@
+/* Ocupa todo el espacio entre header y footer */
+:host {
+  flex: 1;
+  display: flex;
+}
+
+.juntas-page {
+  flex: 1;
+  background: linear-gradient(180deg, #a9cdfa 0, #f5f5f5 320px);
+}
+
+.juntas-titulo {
+  color: #1e3a6e;
+}
+
+/* Encabezado azul: mismas variables que usa Bootstrap en .table-dark */
+.table-azul {
+  --bs-table-color: #ffffff;
+  --bs-table-bg: #1f60d8b9;
+  --bs-table-border-color: #1f5fd8;
+}
+
+/* Página activa de la paginación en el mismo azul */
+.paginacion-azul {
+  --bs-pagination-color: #1f60d8b9;
+  --bs-pagination-active-bg: #1f60d8b9;
+  --bs-pagination-active-border-color: #1f60d8b9;
+}

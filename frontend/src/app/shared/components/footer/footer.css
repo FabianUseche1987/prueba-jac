@@ -1,6 +1,20 @@
-p{
-    display: flex;
-    justify-content: center;
+.footer {
+  background: #1e3a6e;
+  color: #ffffff;
 }
 
-p { color: red; }
+.footer-marca {
+  font-family: 'Arial Black', Arial, sans-serif;
+  font-style: italic;
+  font-weight: 900;
+  font-size: 1.1rem;
+}
+
+.footer-texto {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.footer-linea {
+  border-color: rgba(255, 255, 255, 0.25);
+  opacity: 1;
+}

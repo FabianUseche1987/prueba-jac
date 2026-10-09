@@ -1,1 +1,58 @@
-<p>recuperar-contrasena works!</p>
+<section class="recuperar-page">
+  <div class="container">
+    <div class="recuperar-card mx-auto text-center">
+      @if (!enviado()) {
+        <div class="recuperar-icono mx-auto mb-3">
+          <i class="bi bi-shield-lock"></i>
+        </div>
+        <h1 class="h4 fw-bold recuperar-titulo">¿Olvidaste tu contraseña?</h1>
+        <p class="text-body-secondary mb-4">
+          Escribe el correo con el que te registraste y te enviaremos un enlace para crear una nueva.
+        </p>
+
+        <form [formGroup]="form" (ngSubmit)="enviar()" novalidate>
+          <div class="mb-4 text-start">
+            <input
+              type="email"
+              class="form-control"
+              placeholder="Correo electrónico"
+              formControlName="correo"
+              autocomplete="email"
+              [class.is-invalid]="form.controls.correo.invalid && form.controls.correo.touched"
+            />
+            <div class="invalid-feedback">
+              @if (form.controls.correo.hasError('required')) {
+                Ingresa tu correo
+              } @else {
+                Escribe un correo válido
+              }
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-jac rounded-pill px-5 mb-3">Enviar enlace</button>
+        </form>
+
+        <a routerLink="/" class="recuperar-link">
+          <i class="bi bi-arrow-left me-1"></i>Volver al inicio de sesión
+        </a>
+      } @else {
+        <div class="recuperar-icono recuperar-icono-ok mx-auto mb-3">
+          <i class="bi bi-envelope-check"></i>
+        </div>
+        <h1 class="h4 fw-bold recuperar-titulo">Revisa tu correo</h1>
+        <p class="text-body-secondary mb-4">
+          Si <strong>{{ form.controls.correo.value }}</strong> está registrado, recibirás un enlace
+          para restablecer tu contraseña en los próximos minutos.
+        </p>
+
+        <a routerLink="/" class="btn btn-jac rounded-pill px-5 mb-3">Volver al inicio de sesión</a>
+
+        <div>
+          <button type="button" class="btn btn-link recuperar-link p-0" (click)="intentarDeNuevo()">
+            ¿No te llegó? Intentar con otro correo
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</section>

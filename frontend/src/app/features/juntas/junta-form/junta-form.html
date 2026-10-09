@@ -1,0 +1,110 @@
+<!-- Fondo oscuro detrás del modal -->
+<div class="modal-backdrop show"></div>
+
+<div class="modal d-block" role="dialog" aria-modal="true" aria-labelledby="junta-form-titulo">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <form [formGroup]="form" (ngSubmit)="enviar()" novalidate>
+        <div class="modal-header">
+          <h2 class="modal-title fs-5" id="junta-form-titulo">
+            @if (junta()) {
+              <i class="bi bi-pencil-square me-2"></i>Editar junta
+            } @else {
+              <i class="bi bi-plus-circle me-2"></i>Registrar junta
+            }
+          </h2>
+          <button type="button" class="btn-close" aria-label="Cerrar" (click)="cancelar.emit()"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-12">
+              <label for="nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
+              <input
+                id="nombre"
+                type="text"
+                class="form-control"
+                formControlName="nombre"
+                maxlength="150"
+                placeholder="Ej: JAC Barrio El Progreso"
+                [class.is-invalid]="invalido('nombre')"
+              />
+              <div class="invalid-feedback">Ingresa el nombre de la junta</div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="barrio" class="form-label">Barrio o vereda <span class="text-danger">*</span></label>
+              <input
+                id="barrio"
+                type="text"
+                class="form-control"
+                formControlName="barrio"
+                maxlength="100"
+                [class.is-invalid]="invalido('barrio')"
+              />
+              <div class="invalid-feedback">Ingresa el barrio o vereda</div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="municipio" class="form-label">Municipio <span class="text-danger">*</span></label>
+              <input
+                id="municipio"
+                type="text"
+                class="form-control"
+                formControlName="municipio"
+                maxlength="100"
+                [class.is-invalid]="invalido('municipio')"
+              />
+              <div class="invalid-feedback">Ingresa el municipio</div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="departamento" class="form-label">Departamento</label>
+              <input id="departamento" type="text" class="form-control" formControlName="departamento" maxlength="100" />
+            </div>
+
+            <div class="col-md-6">
+              <label for="nit" class="form-label">NIT</label>
+              <input id="nit" type="text" class="form-control" formControlName="nit" maxlength="20" placeholder="Ej: 900.123.456-7" />
+            </div>
+
+            <div class="col-md-6">
+              <label for="representanteLegal" class="form-label">Representante legal</label>
+              <input
+                id="representanteLegal"
+                type="text"
+                class="form-control"
+                formControlName="representanteLegal"
+                maxlength="150"
+              />
+            </div>
+
+            <div class="col-md-3">
+              <label for="fechaFundacion" class="form-label">Fundación</label>
+              <input id="fechaFundacion" type="date" class="form-control" formControlName="fechaFundacion" />
+            </div>
+
+            <div class="col-md-3">
+              <label for="estado" class="form-label">Estado</label>
+              <select id="estado" class="form-select" formControlName="estado">
+                <option value="activa">Activa</option>
+                <option value="inactiva">Inactiva</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="small text-body-secondary mt-3"><span class="text-danger">*</span> Campos obligatorios</div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary rounded-pill px-4" (click)="cancelar.emit()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-jac rounded-pill px-4">
+            {{ junta() ? 'Guardar cambios' : 'Registrar' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
