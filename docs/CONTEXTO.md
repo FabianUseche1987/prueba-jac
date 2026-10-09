@@ -27,14 +27,25 @@ A partir de aquí se construye la **versión real** (backend, base de datos, aut
 | Capa | Tecnología | Estado |
 |---|---|---|
 | Frontend | Angular 20 (componentes *standalone*, *signals*, `@if`/`@for`), Reactive Forms, Bootstrap 5.3, Bootstrap Icons | En construcción |
-| Backend | Node.js + Express + TypeScript | Por crear (la carpeta `backend/` está vacía) |
+| Backend | Node.js 24 + Express 5 + TypeScript 7, `mysql2` para la BD | En construcción (Fase 1: base creada) |
 | Base de datos | MariaDB 11.8 en Hostinger | Existe, con datos de prueba |
 
 ## 4. Estructura del repositorio
 
 ```
 jacConnect/
-├── backend/                      # API (por crear, ver Fase 1 del plan)
+├── CLAUDE.md                     # instrucciones para Claude Code (carga este contexto y el plan)
+├── backend/                      # API REST
+│   ├── .env                      # datos de conexión reales (NO se sube a git)
+│   ├── .env.example              # plantilla del .env (sí se sube)
+│   └── src/
+│       ├── index.ts              # arranca el servidor
+│       ├── env.ts                # carga el .env
+│       ├── app.ts                # configura Express: cors, JSON, rutas, errores
+│       ├── db.ts                 # pool de conexiones a MariaDB
+│       ├── routes/               # qué URL atiende cada módulo (salud.routes.ts…)
+│       ├── controllers/          # qué hace cada endpoint (salud.controller.ts…)
+│       └── middlewares/          # errores.ts: 404 y errores en JSON
 ├── database/
 │   ├── schema.sql                # estructura completa (crea la BD desde cero, ¡borra todo!)
 │   ├── seed.sql                  # datos de prueba inventados (un usuario por rol)
@@ -149,6 +160,8 @@ Reglas:
 | 2026-10-09 | En desarrollo todos trabajan contra la **base de datos de Hostinger** (con MySQL remoto habilitado) |
 | 2026-10-09 | Se construye por fases, una a la vez (ver [PLAN_DE_TRABAJO.md](PLAN_DE_TRABAJO.md)) |
 | 2026-10-09 | Se resolvieron los 10 problemas del esquema como indica la sección 9 |
+| 2026-10-09 | Backend en formato CommonJS (los `import` no llevan extensión `.js`); la BD se usa con un *pool* de `mysql2` y las fechas llegan como texto `'AAAA-MM-DD'`, igual que en el frontend |
+| 2026-10-09 | Se agregó `CLAUDE.md` en la raíz para que cualquier conversación con Claude Code arranque con este contexto y el plan |
 
 ## 9. Problemas del esquema y cómo se resolvieron
 
@@ -184,4 +197,26 @@ npm install
 npm start          # abre en http://localhost:4200
 ```
 
-**Backend**: se documentará al terminar la Fase 1.
+**Backend**
+
+```bash
+cd backend
+npm install
+# Copiar .env.example como .env y completar los datos de la BD (la primera vez)
+npm run dev        # API en http://localhost:3000 (se reinicia sola al guardar cambios)
+```
+
+Para comprobar que funciona, abre `http://localhost:3000/api/salud` en el navegador. Debe responder `{"ok":true,...}`.
+
+| Comando | Para qué |
+|---|---|
+| `npm run dev` | Desarrollo: arranca la API y la reinicia al guardar un archivo |
+| `npm run revisar` | Revisa errores de TypeScript sin ejecutar |
+| `npm run build` | Compila a JavaScript en `dist/` |
+| `npm start` | Ejecuta la versión compilada (la que se usará al publicar) |
+
+**Cómo viaja una petición en el backend:**
+
+`index.ts` arranca → `app.ts` recibe la petición → `routes/` decide qué función la atiende → `controllers/` hace el trabajo (consulta la BD con `db.ts`) → responde un JSON. Si algo falla, `middlewares/errores.ts` responde el error en JSON.
+
+Ejemplo: `GET /api/salud` → `salud.routes.ts` → `obtenerSalud()` en `salud.controller.ts` → `SELECT 1` en la BD → `{ "ok": true }`.

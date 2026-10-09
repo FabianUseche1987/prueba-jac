@@ -1,0 +1,21 @@
+import express from 'express';
+import cors from 'cors';
+import saludRoutes from './routes/salud.routes';
+import { manejarErrores, rutaNoEncontrada } from './middlewares/errores';
+
+const app = express();
+
+// Solo el frontend (Angular) puede llamar a la API desde el navegador
+app.use(cors({ origin: process.env.CORS_ORIGIN }));
+
+// Permite leer el cuerpo de las peticiones en formato JSON (req.body)
+app.use(express.json());
+
+// Rutas de la API
+app.use('/api/salud', saludRoutes);
+
+// Siempre al final: ruta no encontrada y manejo de errores
+app.use(rutaNoEncontrada);
+app.use(manejarErrores);
+
+export default app;

@@ -41,10 +41,10 @@
 
 **Objetivo**: una API que arranca y se conecta a la base de datos.
 
-- [ ] **1.1** Crear el proyecto en `backend/`:
+- [x] **1.1** Crear el proyecto en `backend/`:
   - Dependencias: `express`, `mysql2`, `cors`, `dotenv`.
   - Para desarrollo: `typescript`, `tsx`, `@types/express`, `@types/cors`, `@types/node`.
-- [ ] **1.2** Crear esta estructura de carpetas:
+- [x] **1.2** Crear esta estructura de carpetas:
   ```
   backend/src/
   ├── index.ts          # arranca el servidor
@@ -54,16 +54,18 @@
   ├── controllers/      # lo que hace cada endpoint
   └── middlewares/      # manejo de errores, autenticación, roles
   ```
-- [ ] **1.3** Crear dos archivos de configuración:
+- [x] **1.3** Crear dos archivos de configuración:
   - `.env` (no se sube) con los datos reales.
   - `.env.example` (sí se sube) con los mismos nombres pero sin valores.
 
   Variables: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `PORT`, `CORS_ORIGIN`.
-- [ ] **1.4** Endpoint `GET /api/salud` que ejecuta `SELECT 1` en la base de datos.
-- [ ] **1.5** Middleware de errores: si algo falla, la API responde un JSON `{ "mensaje": "..." }` en lugar de caerse.
-- [ ] **1.6** Documentar en `CONTEXTO.md` (sección 11) cómo ejecutar el backend.
+- [x] **1.4** Endpoint `GET /api/salud` que ejecuta `SELECT 1` en la base de datos.
+- [x] **1.5** Middleware de errores: si algo falla, la API responde un JSON `{ "mensaje": "..." }` en lugar de caerse.
+- [x] **1.6** Documentar en `CONTEXTO.md` (sección 11) cómo ejecutar el backend.
 
 **Listo cuando**: con `npm run dev`, la dirección `http://localhost:3000/api/salud` responde `{ "ok": true }` con la base de datos conectada.
+
+*✅ Fase 1 terminada el 2026-10-09: `/api/salud` responde `{"ok":true,"mensaje":"API y base de datos funcionando"}` conectado a Hostinger. También se probaron la respuesta 404, el JSON inválido (400) y CORS.*
 
 ---
 
