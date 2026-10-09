@@ -20,6 +20,10 @@ export class AuthService {
 
   readonly estaLogueado = computed(() => this.usuario() !== null);
 
+  // Atajos para mostrar u ocultar cosas según el perfil
+  readonly esAdmin = computed(() => this.usuario()?.perfil === 'administrador');
+  readonly esDirectivo = computed(() => this.usuario()?.perfil === 'directivo');
+
   // Mensaje para mostrar en el login cuando la sesión terminó sola (por ejemplo, venció)
   readonly avisoSesion = signal('');
 

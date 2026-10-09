@@ -15,13 +15,14 @@ export async function iniciarSesion(req: Request, res: Response) {
     return;
   }
 
-  // El usuario con su rol y su junta (LEFT JOIN: puede no tener rol todavía)
+  // El usuario con su rol y su junta (LEFT JOIN: puede no tener rol ni junta)
   const [filas] = await pool.query<RowDataPacket[]>(
     `SELECT u.id_usuario, u.nombre, u.apellido, u.email, u.telefono, u.contrasena_hash, u.estado,
-            ur.id_junta, r.nombre_rol, r.es_directivo
+            ur.id_junta, r.nombre_rol, r.es_directivo, j.nombre AS nombre_junta
      FROM usuario u
      LEFT JOIN usuario_rol ur ON ur.id_usuario = u.id_usuario AND ur.estado = 'activo'
      LEFT JOIN rol r ON r.id_rol = ur.id_rol
+     LEFT JOIN junta j ON j.id_junta = ur.id_junta
      WHERE u.email = ?`,
     [email],
   );

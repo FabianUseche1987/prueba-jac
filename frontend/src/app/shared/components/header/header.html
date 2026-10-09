@@ -31,11 +31,14 @@
 
         <!-- Solo se muestra con sesión iniciada -->
         @if (auth.usuario(); as usuario) {
-          <li class="nav-item">
-            <a class="nav-link" routerLink="/juntas" routerLinkActive="active" (click)="cerrarMenu()">
-              Juntas
-            </a>
-          </li>
+          <!-- Gestión de juntas: solo el administrador -->
+          @if (auth.esAdmin()) {
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/juntas" routerLinkActive="active" (click)="cerrarMenu()">
+                Juntas
+              </a>
+            </li>
+          }
           <li class="nav-item">
             <span class="navbar-text">
               <i class="bi bi-person-circle me-1"></i>{{ usuario.nombre }}

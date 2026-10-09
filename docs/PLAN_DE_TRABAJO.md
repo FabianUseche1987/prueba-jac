@@ -129,15 +129,18 @@
 
 **Objetivo**: cada perfil (administrador, directivo, ciudadano) ve y hace solo lo que le corresponde (ver sección 7 de `CONTEXTO.md`).
 
-- [ ] **4.1** Backend: middleware `requiereRol(...)` que responde `403` si el rol no tiene permiso.
-- [ ] **4.2** Backend: crear, editar y eliminar juntas queda solo para el **administrador**.
-- [ ] **4.3** Frontend:
+- [x] **4.1** Backend: middleware `requiereRol(...)` que responde `403` si el rol no tiene permiso.
+- [x] **4.2** Backend: toda la gestión de juntas (listar, crear, editar y eliminar) queda solo para el **administrador**.
+- [x] **4.3** Frontend:
   - `AuthService` con `esAdmin()` y `esDirectivo()`.
   - Un `rolGuard` para las rutas.
   - Header y botones según el rol.
-- [ ] **4.4** En `seed.sql`, tres usuarios de prueba: un administrador, un directivo y un ciudadano.
+  - Después del login, el administrador va a Juntas y los demás al inicio, donde ven su cargo y su junta.
+- [x] **4.4** En `seed.sql`, tres usuarios de prueba: un administrador, un directivo y un ciudadano. *(Ya estaban desde la Fase 0; en Hostinger, ver la tabla de usuarios de prueba en `CONTEXTO.md`.)*
 
 **Listo cuando**: un ciudadano no ve "Juntas" en el menú, no puede abrir `/juntas`, y si llama a la API directamente recibe `403`.
+
+*✅ Fase 4 terminada el 2026-10-09: probado con los tres perfiles, en la API (403) y en la pantalla (menú, URL escrita a mano y página de llegada).*
 
 ---
 

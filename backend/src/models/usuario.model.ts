@@ -14,6 +14,7 @@ export interface UsuarioSesion {
   perfil: Perfil;
   rol: string | null;      // nombre del cargo: Presidente, Tesorero, Ciudadano común...
   idJunta: number | null;  // null para el administrador
+  nombreJunta: string | null;
 }
 
 // Calcula el perfil a partir del rol que tiene en usuario_rol
@@ -91,5 +92,6 @@ export function filaAUsuarioSesion(fila: RowDataPacket): UsuarioSesion {
     perfil: calcularPerfil(fila.nombre_rol, fila.es_directivo),
     rol: fila.nombre_rol,
     idJunta: fila.id_junta,
+    nombreJunta: fila.nombre_junta,
   };
 }

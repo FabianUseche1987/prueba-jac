@@ -27,9 +27,24 @@
             <!-- Ya inició sesión -->
             <div class="text-center">
               <i class="bi bi-person-check inicio-saludo-icono"></i>
-              <h2 class="h4 fw-bold inicio-titulo mt-2">Hola, {{ usuario.nombre }}</h2>
-              <p class="text-body-secondary small mb-4">Ya iniciaste sesión en JAC Connect.</p>
-              <a routerLink="/juntas" class="btn btn-jac rounded-pill w-100">Ir a juntas</a>
+              <h2 class="h4 fw-bold inicio-titulo mt-2 mb-1">Hola, {{ usuario.nombre }}</h2>
+
+              <!-- Cargo y junta -->
+              <p class="text-body-secondary small mb-3">
+                {{ usuario.rol ?? 'Sin cargo asignado' }}
+                @if (usuario.nombreJunta) {
+                  · {{ usuario.nombreJunta }}
+                }
+              </p>
+
+              @if (auth.esAdmin()) {
+                <a routerLink="/juntas" class="btn btn-jac rounded-pill w-100">Ir a la gestión de juntas</a>
+              } @else {
+                <div class="alert alert-info small text-start mb-0">
+                  <i class="bi bi-info-circle me-1"></i>
+                  Muy pronto encontrarás aquí las reuniones, proyectos y avisos de tu junta.
+                </div>
+              }
             </div>
           } @else {
             <h2 class="h4 fw-bold text-center inicio-titulo mb-1">Iniciar sesión</h2>

@@ -37,9 +37,11 @@ export class LoginForm {
     const { correo, contrasena } = this.form.getRawValue();
 
     this.auth.login(correo, contrasena).subscribe({
-      next: () => {
+      next: (usuario) => {
         this.ingresando = false;
-        this.router.navigate(['/juntas']);
+        // Cada perfil va a su página: el administrador a la gestión de juntas,
+        // los demás al inicio (por ahora, hasta que existan reuniones, proyectos y avisos)
+        this.router.navigate([usuario.perfil === 'administrador' ? '/juntas' : '/']);
       },
       error: (err: HttpErrorResponse) => {
         this.ingresando = false;

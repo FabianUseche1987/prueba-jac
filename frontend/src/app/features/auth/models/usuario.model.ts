@@ -12,6 +12,7 @@ export interface Usuario {
   perfil: Perfil;
   rol: string | null;      // cargo: Presidente, Tesorero, Ciudadano común...
   idJunta: number | null;  // null para el administrador
+  nombreJunta: string | null;
 }
 
 // Respuesta de POST /api/auth/login

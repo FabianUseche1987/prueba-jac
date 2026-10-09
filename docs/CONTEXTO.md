@@ -32,6 +32,7 @@ A partir de aquí se construye la **versión real** (backend, base de datos, aut
 | Login | **Real**: con correo y contraseña contra la BD, con token JWT (Fase 3). El usuario mock se eliminó |
 | Registro | **Real**: crea la cuenta en la BD con la junta elegida y el rol "Ciudadano común" (Fase 3) |
 | Seguridad de la API | Todo, salvo `/api/salud` y `/api/auth`, exige un token válido (Fase 3) |
+| Roles | La gestión de juntas es solo para el administrador, en la API (403) y en la pantalla. Directivos y ciudadanos ven su cargo y su junta en el inicio (Fase 4) |
 
 ## 3. Tecnologías
 
@@ -59,7 +60,7 @@ jacConnect/
 │       ├── models/               # forma de los datos y conversión BD → JSON (junta.model.ts, usuario.model.ts…)
 │       ├── routes/               # qué URL atiende cada módulo (salud.routes.ts, juntas.routes.ts…)
 │       ├── controllers/          # qué hace cada endpoint (salud.controller.ts, juntas.controller.ts…)
-│       └── middlewares/          # errores.ts (404 y errores en JSON), autenticacion.ts (verificarToken)
+│       └── middlewares/          # errores.ts (404 y errores en JSON), autenticacion.ts (verificarToken, requiereRol)
 ├── database/
 │   ├── schema.sql                # estructura completa (crea la BD desde cero, ¡borra todo!)
 │   ├── seed.sql                  # datos de prueba inventados (un usuario por rol)
@@ -80,6 +81,7 @@ jacConnect/
 │           │   ├── auth/
 │           │   │   ├── auth.service.ts        # login contra la API; guarda token y usuario
 │           │   │   ├── auth.interceptor.ts    # agrega el token a cada petición; si hay 401, cierra la sesión
+│           │   │   ├── rol.guard.ts           # rolGuard('administrador', ...): rutas solo para ciertos perfiles
 │           │   │   ├── auth.guard.ts          # protege rutas que requieren sesión
 │           │   │   ├── login-form/            # formulario de login reutilizable
 │           │   │   ├── registro/
@@ -196,6 +198,8 @@ Reglas:
 | 2026-10-09 | **API protegida**: `/api/salud` y `/api/auth` son públicas; todo lo demás pasa por `verificarToken`, que responde 401 sin un token válido. Los datos del token quedan en `res.locals.usuario`, para que los controladores sepan quién hace la petición |
 | 2026-10-09 | El frontend envía el token con un interceptor, y solo a nuestra API. Si recibe 401, cierra la sesión y avisa "Tu sesión venció" |
 | 2026-10-09 | **Registro**: la persona elige su junta en una lista pública (`GET /api/auth/juntas`, solo juntas activas, con id, nombre y municipio) y queda como "Ciudadano común". El usuario y su rol se guardan en una transacción. Si el correo o el documento ya existen, la API responde 409. Después de registrarse hay que iniciar sesión |
+| 2026-10-09 | **Permisos por perfil**: en el backend se usa `verificarToken` y luego `requiereRol(...)` (403 si el perfil no tiene permiso); en el frontend, `rolGuard(...)` y `auth.esAdmin()` para rutas, menú y botones. El administrador NO ve reuniones, proyectos ni avisos (no pertenece a ninguna junta) |
+| 2026-10-09 | El perfil se guarda en el token al iniciar sesión: **si le cambian el rol a alguien, debe cerrar sesión y volver a entrar** para que se aplique |
 
 ## 9. Problemas del esquema y cómo se resolvieron
 
@@ -266,6 +270,7 @@ Ejemplo: `GET /api/salud` → `salud.routes.ts` → `obtenerSalud()` en `salud.c
 | `feature/fase1-backend-base` | Backend base (sale de la rama de la Fase 0) | Cada fase nueva sale de la rama de la fase anterior |
 | `feature/fase2-juntas` | Juntas conectadas a la BD: CRUD completo (sale de la rama de la Fase 1) | Terminada |
 | `feature/fase3-auth` | Login, protección de la API y registro reales (sale de la rama de la Fase 2) | Terminada |
+| `feature/fase4-roles` | Permisos por perfil (sale de la rama de la Fase 3) | Terminada |
 
 Reglas:
 

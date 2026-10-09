@@ -4,7 +4,7 @@ import saludRoutes from './routes/salud.routes';
 import juntasRoutes from './routes/juntas.routes';
 import authRoutes from './routes/auth.routes';
 import { manejarErrores, rutaNoEncontrada } from './middlewares/errores';
-import { verificarToken } from './middlewares/autenticacion';
+import { requiereRol, verificarToken } from './middlewares/autenticacion';
 
 const app = express();
 
@@ -18,8 +18,10 @@ app.use(express.json());
 app.use('/api/salud', saludRoutes);
 app.use('/api/auth', authRoutes);
 
-// Rutas protegidas: verificarToken se ejecuta antes y rechaza (401) si no hay sesión
-app.use('/api/juntas', verificarToken, juntasRoutes);
+// Rutas protegidas:
+//   verificarToken -> 401 si no hay sesión
+//   requiereRol    -> 403 si el perfil no tiene permiso
+app.use('/api/juntas', verificarToken, requiereRol('administrador'), juntasRoutes);
 
 // Siempre al final: ruta no encontrada y manejo de errores
 app.use(rutaNoEncontrada);
