@@ -15,12 +15,12 @@
 
 **Objetivo**: base de datos y repositorio listos para empezar.
 
-- [ ] **0.1** Guardar la versión de la profesora con una etiqueta, para poder volver a ella:
-  `git tag version-profe 38039ab` y luego `git push origin version-profe`.
+- [x] **0.1** Guardar la versión de la profesora con una etiqueta, para poder volver a ella:
+  `git tag version-profe 38039ab` y luego `git push origin version-profe`. *(Hecho el 2026-10-09. Para verla: `git switch --detach version-profe`.)*
 - [x] **0.2** Habilitar **MySQL remoto** en Hostinger (hPanel → Sitios web → Panel → Bases de datos → MySQL remoto).
   Hoy ya existe una regla con `%` (cualquier host), así que todos pueden conectarse desde cualquier IP. Mientras sea así, la contraseña del usuario de la BD debe ser larga y aleatoria. Esa regla se quita antes de publicar (paso 6.5).
   Conexión probada con MySQL Workbench el 2026-10-09. Los datos de conexión (servidor, usuario y contraseña) **no se escriben en el repositorio**: van en el `.env` y se piden al líder del equipo.
-- [ ] **0.3** Crear en Hostinger un usuario de base de datos **solo para la aplicación** (no usar el principal).
+- [ ] **0.3** *(Opcional, se puede dejar para la Fase 6)* Crear en Hostinger un usuario de base de datos **solo para la aplicación** (no usar el principal).
 - [x] **0.4** Decidir cómo resolver cada problema del esquema y anotarlo (sección 9 de `CONTEXTO.md`, decidido el 2026-10-09).
 - [x] **0.5** Scripts de base de datos en la carpeta `database/`:
   - [x] `schema.sql`: estructura corregida (crea la BD desde cero).
