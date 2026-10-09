@@ -19,3 +19,23 @@ export interface RespuestaLogin {
   token: string;
   usuario: Usuario;
 }
+
+// Junta que se puede elegir al registrarse (GET /api/auth/juntas)
+export interface JuntaOpcion {
+  idJunta: number;
+  nombre: string;
+  municipio: string;
+}
+
+// Datos que se envían para crear una cuenta (POST /api/auth/registro)
+export interface DatosRegistro {
+  nombre: string;
+  apellido: string;
+  tipoDocumento: string;
+  numeroDocumento: string;
+  email: string;
+  telefono: string;
+  contrasena: string;
+  idJunta: number;
+  aceptaDatos: boolean;
+}

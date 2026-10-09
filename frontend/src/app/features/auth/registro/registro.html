@@ -109,6 +109,26 @@
               </div>
             </div>
 
+            <!-- Junta a la que pertenece -->
+            <div class="col-12">
+              <label for="idJunta" class="form-label">Junta de Acción Comunal <span class="text-danger">*</span></label>
+              <select
+                id="idJunta"
+                class="form-select"
+                formControlName="idJunta"
+                [class.is-invalid]="invalido('idJunta')"
+              >
+                <option [ngValue]="null" disabled>Elige la junta de tu barrio o vereda</option>
+                @for (junta of juntas; track junta.idJunta) {
+                  <option [ngValue]="junta.idJunta">{{ junta.nombre }} ({{ junta.municipio }})</option>
+                }
+              </select>
+              <div class="invalid-feedback">Elige tu junta</div>
+              @if (errorJuntas) {
+                <div class="small text-danger mt-1">{{ errorJuntas }}</div>
+              }
+            </div>
+
             <!-- Contraseña -->
             <div class="col-md-6">
               <label for="contrasena" class="form-label">Contraseña <span class="text-danger">*</span></label>
@@ -133,7 +153,7 @@
                   @if (form.controls.contrasena.hasError('required')) {
                     Ingresa una contraseña
                   } @else {
-                    Mínimo 8 caracteres
+                    Entre 8 y 72 caracteres
                   }
                 </div>
               </div>
@@ -177,8 +197,21 @@
 
           <div class="small text-body-secondary mt-3"><span class="text-danger">*</span> Campos obligatorios</div>
 
+          <!-- Error que devuelve la API (por ejemplo, correo ya registrado) -->
+          @if (errorRegistro) {
+            <div class="alert alert-danger py-2 small mt-3 mb-0" role="alert">
+              <i class="bi bi-exclamation-circle me-1"></i>{{ errorRegistro }}
+            </div>
+          }
+
           <div class="text-center mt-4">
-            <button type="submit" class="btn btn-jac rounded-pill px-5">Registrarme</button>
+            <button type="submit" class="btn btn-jac rounded-pill px-5" [disabled]="enviando">
+              @if (enviando) {
+                <span class="spinner-border spinner-border-sm me-1"></span>Creando cuenta…
+              } @else {
+                Registrarme
+              }
+            </button>
           </div>
         </form>
 

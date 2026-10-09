@@ -30,6 +30,8 @@ A partir de aquí se construye la **versión real** (backend, base de datos, aut
 | Backend | Funcionando: `/api/salud` y el CRUD de `/api/juntas` (Fases 1 y 2) |
 | Pantalla de juntas | **Conectada a la BD**: listar, registrar, editar y eliminar (Fase 2 terminada) |
 | Login | **Real**: con correo y contraseña contra la BD, con token JWT (Fase 3). El usuario mock se eliminó |
+| Registro | **Real**: crea la cuenta en la BD con la junta elegida y el rol "Ciudadano común" (Fase 3) |
+| Seguridad de la API | Todo, salvo `/api/salud` y `/api/auth`, exige un token válido (Fase 3) |
 
 ## 3. Tecnologías
 
@@ -193,6 +195,7 @@ Reglas:
 | 2026-10-09 | Contraseñas con bcrypt (10 rondas). El código de seguridad está en `backend/src/seguridad.ts` |
 | 2026-10-09 | **API protegida**: `/api/salud` y `/api/auth` son públicas; todo lo demás pasa por `verificarToken`, que responde 401 sin un token válido. Los datos del token quedan en `res.locals.usuario`, para que los controladores sepan quién hace la petición |
 | 2026-10-09 | El frontend envía el token con un interceptor, y solo a nuestra API. Si recibe 401, cierra la sesión y avisa "Tu sesión venció" |
+| 2026-10-09 | **Registro**: la persona elige su junta en una lista pública (`GET /api/auth/juntas`, solo juntas activas, con id, nombre y municipio) y queda como "Ciudadano común". El usuario y su rol se guardan en una transacción. Si el correo o el documento ya existen, la API responde 409. Después de registrarse hay que iniciar sesión |
 
 ## 9. Problemas del esquema y cómo se resolvieron
 
@@ -262,7 +265,7 @@ Ejemplo: `GET /api/salud` → `salud.routes.ts` → `obtenerSalud()` en `salud.c
 | `feature/fase0-base-datos` | Documentación y scripts de base de datos | Ya en GitHub |
 | `feature/fase1-backend-base` | Backend base (sale de la rama de la Fase 0) | Cada fase nueva sale de la rama de la fase anterior |
 | `feature/fase2-juntas` | Juntas conectadas a la BD: CRUD completo (sale de la rama de la Fase 1) | Terminada |
-| `feature/fase3-auth` | Login, protección de la API y registro reales (sale de la rama de la Fase 2) | En curso |
+| `feature/fase3-auth` | Login, protección de la API y registro reales (sale de la rama de la Fase 2) | Terminada |
 
 Reglas:
 

@@ -2,7 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { RespuestaLogin, Usuario } from './models/usuario.model';
+import { DatosRegistro, JuntaOpcion, RespuestaLogin, Usuario } from './models/usuario.model';
 
 const CLAVE_USUARIO = 'usuario';
 const CLAVE_TOKEN = 'token';
@@ -42,6 +42,16 @@ export class AuthService {
       // map: al componente solo le entregamos el usuario
       map((respuesta) => respuesta.usuario),
     );
+  }
+
+  // GET /api/auth/juntas: juntas activas para elegir al registrarse (no necesita sesión)
+  listarJuntasParaRegistro(): Observable<JuntaOpcion[]> {
+    return this.http.get<JuntaOpcion[]>(`${this.url}/juntas`);
+  }
+
+  // POST /api/auth/registro: crea la cuenta (después hay que iniciar sesión)
+  registrar(datos: DatosRegistro): Observable<{ mensaje: string; idUsuario: number }> {
+    return this.http.post<{ mensaje: string; idUsuario: number }>(`${this.url}/registro`, datos);
   }
 
   logout() {

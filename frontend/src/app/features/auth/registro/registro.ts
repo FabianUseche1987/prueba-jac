@@ -1,4 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   AbstractControl,
   FormBuilder,
@@ -7,6 +8,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../auth.service';
+import { JuntaOpcion } from '../models/usuario.model';
 
 // Valida que la contraseña y su confirmación sean iguales
 function contrasenasIguales(form: AbstractControl): ValidationErrors | null {
@@ -20,11 +23,18 @@ function contrasenasIguales(form: AbstractControl): ValidationErrors | null {
   templateUrl: './registro.html',
   styleUrl: './registro.css',
 })
-export class Registro {
+export class Registro implements OnInit {
   private readonly fb = inject(FormBuilder);
+  private readonly auth = inject(AuthService);
 
   verContrasena = false;
   registrado = signal(false);
+  enviando = false;
+  errorRegistro = '';
+
+  // Juntas que se pueden elegir (vienen de la API)
+  juntas: JuntaOpcion[] = [];
+  errorJuntas = '';
 
   tiposDocumento = [
     { valor: 'CC', texto: 'Cédula de ciudadanía' },
@@ -40,12 +50,20 @@ export class Registro {
       numeroDocumento: ['', [Validators.required, Validators.pattern(/^\d{5,12}$/)]],
       correo: ['', [Validators.required, Validators.email]],
       celular: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
-      contrasena: ['', [Validators.required, Validators.minLength(8)]],
+      idJunta: this.fb.control<number | null>(null, Validators.required),
+      contrasena: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(72)]],
       confirmarContrasena: ['', Validators.required],
       aceptaDatos: [false, Validators.requiredTrue],
     },
     { validators: contrasenasIguales },
   );
+
+  ngOnInit() {
+    this.auth.listarJuntasParaRegistro().subscribe({
+      next: (juntas) => (this.juntas = juntas),
+      error: () => (this.errorJuntas = 'No se pudieron cargar las juntas. Intenta de nuevo más tarde.'),
+    });
+  }
 
   invalido(campo: string) {
     const control = this.form.get(campo);
@@ -58,14 +76,44 @@ export class Registro {
   }
 
   registrar() {
+    this.errorRegistro = '';
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    // TODO: enviar los datos al backend para crear el usuario
-    const { confirmarContrasena, ...usuario } = this.form.getRawValue();
-    console.log('Registro', usuario);
-    this.registrado.set(true);
+    // Los nombres de los campos del formulario se pasan a los que espera la API
+    const valores = this.form.getRawValue();
+    this.enviando = true;
+
+    this.auth
+      .registrar({
+        nombre: valores.nombres,
+        apellido: valores.apellidos,
+        tipoDocumento: valores.tipoDocumento,
+        numeroDocumento: valores.numeroDocumento,
+        email: valores.correo,
+        telefono: valores.celular,
+        contrasena: valores.contrasena,
+        idJunta: valores.idJunta!,  // "!": ya validamos que no es null
+        aceptaDatos: valores.aceptaDatos,
+      })
+      .subscribe({
+        next: () => {
+          this.enviando = false;
+          this.registrado.set(true);
+        },
+        error: (err: HttpErrorResponse) => {
+          this.enviando = false;
+          if (err.status === 0) {
+            this.errorRegistro = 'No hay conexión con el servidor. Intenta de nuevo en un momento.';
+          } else {
+            const errores: string[] = err.error?.errores ?? [];
+            const mensaje: string = err.error?.mensaje ?? 'No se pudo crear la cuenta.';
+            this.errorRegistro = errores.length > 0 ? `${mensaje}: ${errores.join('. ')}.` : mensaje;
+          }
+        },
+      });
   }
 }
