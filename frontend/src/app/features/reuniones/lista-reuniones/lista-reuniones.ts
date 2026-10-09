@@ -5,11 +5,12 @@ import { AuthService } from '../../auth/auth.service';
 import { ReunionesService } from '../reuniones.service';
 import { DatosReunion, Reunion } from '../models/reunion.model';
 import { ReunionForm } from '../reunion-form/reunion-form';
+import { AsistenciaModal } from '../asistencia-modal/asistencia-modal';
 import { mensajeDeError } from '../../../shared/utils/mensaje-error';
 
 @Component({
   selector: 'app-lista-reuniones',
-  imports: [DatePipe, ReunionForm],
+  imports: [DatePipe, ReunionForm, AsistenciaModal],
   templateUrl: './lista-reuniones.html',
   styleUrl: './lista-reuniones.css',
 })
@@ -116,6 +117,25 @@ export class ListaReuniones implements OnInit {
         this.errorFormulario = mensajeDeError(err);  // el modal sigue abierto
       },
     });
+  }
+
+  // true si asistieron al menos las personas que pide el quórum (o si no se definió quórum)
+  alcanzaQuorum(reunion: Reunion): boolean {
+    return reunion.quorumRequerido === null || reunion.asistentes >= reunion.quorumRequerido;
+  }
+
+  // ----- Asistencia (solo directivos) -----
+  reunionAsistencia: Reunion | null = null;  // mientras tenga valor, el modal está abierto
+
+  abrirAsistencia(reunion: Reunion) {
+    this.reunionAsistencia = reunion;
+  }
+
+  asistenciaGuardada(asistentes: number) {
+    const titulo = this.reunionAsistencia?.titulo;
+    this.reunionAsistencia = null;
+    this.aviso = { tipo: 'success', texto: `Asistencia de "${titulo}" guardada: ${asistentes} personas asistieron.` };
+    this.cargarReuniones();
   }
 
   // ----- Colores e íconos (clases de Bootstrap) -----

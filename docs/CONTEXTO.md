@@ -33,7 +33,7 @@ A partir de aquí se construye la **versión real** (backend, base de datos, aut
 | Registro | **Real**: crea la cuenta en la BD con la junta elegida y el rol "Ciudadano común" (Fase 3) |
 | Seguridad de la API | Todo, salvo `/api/salud` y `/api/auth`, exige un token válido (Fase 3) |
 | Roles | La gestión de juntas es solo para el administrador, en la API (403) y en la pantalla. Directivos y ciudadanos ven su cargo y su junta en el inicio (Fase 4) |
-| Reuniones | Directivos y ciudadanos ven las reuniones **de su junta** en `/reuniones`; los directivos convocan y editan (estado y acta). La asistencia está en curso (Fase 5.1) |
+| Reuniones | Directivos y ciudadanos ven las reuniones **de su junta** en `/reuniones` y si hubo quórum; los directivos convocan, editan (estado y acta) y toman asistencia (Fase 5.1 terminada) |
 
 ## 3. Tecnologías
 
@@ -93,6 +93,7 @@ jacConnect/
 │           │   │   ├── reuniones.service.ts   # llama a la API /api/reuniones
 │           │   │   ├── lista-reuniones/       # página /reuniones: pestañas y tarjetas
 │           │   │   ├── reunion-form/          # modal para convocar / editar (directivos)
+│           │   │   ├── asistencia-modal/      # modal para tomar asistencia (directivos)
 │           │   │   └── models/reunion.model.ts
 │           │   └── juntas/
 │           │       ├── juntas.service.ts      # llama a la API /api/juntas
@@ -213,6 +214,7 @@ Reglas:
 | 2026-10-09 | La app usa el idioma **es-CO** (`LOCALE_ID`): las fechas se muestran como "sábado 10 de octubre · 6:00 p. m." y la moneda en pesos colombianos |
 | 2026-10-09 | Código repetido a archivos compartidos: en el backend, las validaciones van en `validaciones.ts`; en el frontend, los mensajes de error de la API salen de `shared/utils/mensaje-error.ts` |
 | 2026-10-09 | Las reuniones no se eliminan: se marcan como **canceladas** (queda el registro de que se convocaron) |
+| 2026-10-09 | **Asistencia**: la lista con nombres, horas y justificaciones solo la ven los directivos (las justificaciones pueden ser privadas). Todos ven el resultado: cuántos asistieron y si hubo quórum. Solo se puede registrar a miembros activos de la junta |
 
 ## 9. Problemas del esquema y cómo se resolvieron
 
@@ -284,7 +286,7 @@ Ejemplo: `GET /api/salud` → `salud.routes.ts` → `obtenerSalud()` en `salud.c
 | `feature/fase2-juntas` | Juntas conectadas a la BD: CRUD completo (sale de la rama de la Fase 1) | Terminada |
 | `feature/fase3-auth` | Login, protección de la API y registro reales (sale de la rama de la Fase 2) | Terminada |
 | `feature/fase4-roles` | Permisos por perfil (sale de la rama de la Fase 3) | Terminada |
-| `feature/fase5-reuniones` | Módulo de reuniones (sale de la rama de la Fase 4) | En curso |
+| `feature/fase5-reuniones` | Módulo de reuniones y asistencia (sale de la rama de la Fase 4) | Terminada |
 
 Reglas:
 

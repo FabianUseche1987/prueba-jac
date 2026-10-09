@@ -1,0 +1,114 @@
+<!-- Fondo oscuro detrás del modal -->
+<div class="modal-backdrop show"></div>
+
+<div class="modal d-block" role="dialog" aria-modal="true" aria-labelledby="asistencia-titulo">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title fs-5" id="asistencia-titulo">
+            <i class="bi bi-person-check me-2"></i>Asistencia
+          </h2>
+          <div class="small text-body-secondary">
+            {{ reunion().titulo }} · {{ reunion().fechaHora | date: "d 'de' MMMM, h:mm a" }}
+          </div>
+        </div>
+        <button type="button" class="btn-close" aria-label="Cerrar" (click)="cancelar.emit()"></button>
+      </div>
+
+      <div class="modal-body">
+        @if (cargando) {
+          <div class="text-center text-body-secondary py-4">
+            <span class="spinner-border spinner-border-sm text-primary me-2"></span>Cargando miembros de la junta…
+          </div>
+        } @else {
+          <!-- Resumen en vivo: cambia al marcar o desmarcar -->
+          <div class="alert d-flex flex-wrap align-items-center gap-2" [class.alert-success]="hayQuorum" [class.alert-warning]="!hayQuorum">
+            <i class="bi bi-people"></i>
+            <span class="me-auto">
+              <strong>{{ presentes }} de {{ filas.length }}</strong> miembros presentes
+              @if (reunion().quorumRequerido) {
+                · Quórum requerido: {{ reunion().quorumRequerido }}
+                {{ hayQuorum ? '✔ se alcanza' : '✖ no se alcanza' }}
+              }
+            </span>
+            <button type="button" class="btn btn-sm btn-link p-0" (click)="marcarTodos(true)">Marcar todos</button>
+            <button type="button" class="btn btn-sm btn-link p-0" (click)="marcarTodos(false)">Ninguno</button>
+          </div>
+
+          <ul class="list-group">
+            @for (fila of filas; track fila.idUsuario) {
+              <li class="list-group-item">
+                <div class="row g-2 align-items-center">
+                  <!-- Nombre e interruptor "asistió" -->
+                  <div class="col-md-6">
+                    <div class="form-check form-switch">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        role="switch"
+                        [id]="'asistio-' + fila.idUsuario"
+                        [(ngModel)]="fila.asistio"
+                      />
+                      <label class="form-check-label" [for]="'asistio-' + fila.idUsuario">
+                        <span class="fw-semibold">{{ fila.nombre }}</span>
+                        <span class="d-block small text-body-secondary">{{ fila.rol }}</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Si asistió: hora de llegada. Si no: justificación -->
+                  <div class="col-md-6">
+                    @if (fila.asistio) {
+                      <div class="input-group input-group-sm">
+                        <span class="input-group-text"><i class="bi bi-clock"></i></span>
+                        <input type="time" class="form-control" aria-label="Hora de llegada" [(ngModel)]="fila.horaLlegada" />
+                      </div>
+                    } @else {
+                      <input
+                        type="text"
+                        class="form-control form-control-sm"
+                        placeholder="Justificación (opcional)"
+                        maxlength="500"
+                        aria-label="Justificación"
+                        [(ngModel)]="fila.justificacion"
+                      />
+                    }
+                  </div>
+                </div>
+              </li>
+            } @empty {
+              <li class="list-group-item text-center text-body-secondary py-4">
+                La junta todavía no tiene miembros registrados.
+              </li>
+            }
+          </ul>
+        }
+
+        @if (error) {
+          <div class="alert alert-danger py-2 small mt-3 mb-0" role="alert">
+            <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+          </div>
+        }
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary rounded-pill px-4" (click)="cancelar.emit()">
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="btn btn-jac rounded-pill px-4"
+          [disabled]="cargando || guardando || filas.length === 0"
+          (click)="guardar()"
+        >
+          @if (guardando) {
+            <span class="spinner-border spinner-border-sm me-1"></span>Guardando…
+          } @else {
+            Guardar asistencia
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

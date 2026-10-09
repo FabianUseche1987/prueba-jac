@@ -1,0 +1,15 @@
+.modal-content {
+  border: 0;
+  border-radius: 1.25rem;
+}
+
+.modal-title {
+  color: #1e3a6e;
+  font-weight: 700;
+}
+
+/* Interruptor "asistió" en el verde de la marca */
+.form-check-input:checked {
+  background-color: #3cc152;
+  border-color: #3cc152;
+}

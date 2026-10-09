@@ -71,15 +71,26 @@
                 </span>
 
                 @if (auth.esDirectivo()) {
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-outline-primary border-0 ms-auto"
-                    title="Editar"
-                    aria-label="Editar reunión"
-                    (click)="editar(reunion)"
-                  >
-                    <i class="bi bi-pencil-square"></i>
-                  </button>
+                  <div class="ms-auto d-flex gap-1">
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-success border-0"
+                      title="Tomar asistencia"
+                      aria-label="Tomar asistencia"
+                      (click)="abrirAsistencia(reunion)"
+                    >
+                      <i class="bi bi-person-check"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-primary border-0"
+                      title="Editar"
+                      aria-label="Editar reunión"
+                      (click)="editar(reunion)"
+                    >
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+                  </div>
                 }
               </div>
 
@@ -95,6 +106,21 @@
                   <span class="text-capitalize">({{ reunion.modalidad ?? 'presencial' }})</span>
                 </span>
               </div>
+
+              <!-- Resultado de la asistencia (lo ven todos) -->
+              @if (reunion.asistenciaRegistrada) {
+                <div class="small mt-2" [class.text-success]="alcanzaQuorum(reunion)" [class.text-danger]="!alcanzaQuorum(reunion)">
+                  <i class="bi bi-people me-1"></i>Asistieron {{ reunion.asistentes }}
+                  @if (reunion.quorumRequerido) {
+                    de {{ reunion.quorumRequerido }} requeridos ·
+                    {{ alcanzaQuorum(reunion) ? 'Hubo quórum ✔' : 'No hubo quórum ✖' }}
+                  }
+                </div>
+              } @else if (pestana === 'anteriores') {
+                <div class="small text-body-secondary mt-2">
+                  <i class="bi bi-people me-1"></i>Asistencia sin registrar
+                </div>
+              }
 
               <button type="button" class="btn btn-link btn-sm px-0 mt-1" (click)="alternarDetalle(reunion.idReunion)">
                 @if (detalleAbierto === reunion.idReunion) {
@@ -148,5 +174,14 @@
     [error]="errorFormulario"
     (guardar)="guardarReunion($event)"
     (cancelar)="cerrarFormulario()"
+  />
+}
+
+<!-- Asistencia de una reunión (se crea de nuevo cada vez que se abre) -->
+@if (reunionAsistencia) {
+  <app-asistencia-modal
+    [reunion]="reunionAsistencia"
+    (guardada)="asistenciaGuardada($event)"
+    (cancelar)="reunionAsistencia = null"
   />
 }

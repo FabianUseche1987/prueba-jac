@@ -15,13 +15,17 @@ export interface Reunion {
   actaResumen: string | null;
   quorumRequerido: number | null;
   creadaPor: string;              // nombre de quien la convocó
+  asistentes: number;             // cuántos asistieron
+  asistenciaRegistrada: boolean;  // si ya se tomó la asistencia
 }
 
-// Consulta base: la reunión con el nombre de quien la convocó
+// Consulta base: la reunión con el nombre de quien la convocó y el resumen de asistencia
 export const SELECT_REUNION = `
   SELECT r.id_reunion, r.id_junta, r.tipo, r.titulo, r.orden_del_dia, r.fecha_hora, r.lugar,
          r.modalidad, r.estado, r.acta_resumen, r.quorum_requerido,
-         CONCAT(TRIM(u.nombre), ' ', TRIM(u.apellido)) AS creada_por
+         CONCAT(TRIM(u.nombre), ' ', TRIM(u.apellido)) AS creada_por,
+         (SELECT COUNT(*) FROM asistencia a WHERE a.id_reunion = r.id_reunion AND a.asistio = 1) AS asistentes,
+         (SELECT COUNT(*) FROM asistencia a WHERE a.id_reunion = r.id_reunion) AS registros_asistencia
   FROM reunion r
   JOIN usuario u ON u.id_usuario = r.id_creador`;
 
@@ -41,6 +45,8 @@ export function filaAReunion(fila: RowDataPacket): Reunion {
     actaResumen: fila.acta_resumen,
     quorumRequerido: fila.quorum_requerido,
     creadaPor: fila.creada_por,
+    asistentes: Number(fila.asistentes),
+    asistenciaRegistrada: Number(fila.registros_asistencia) > 0,
   };
 }
 
