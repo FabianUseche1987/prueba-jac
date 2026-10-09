@@ -1,4 +1,34 @@
-p{
-    display: flex;
-    justify-content: center;
+.navbar {
+  --bs-navbar-color: #1e3a6e;
+  --bs-navbar-hover-color: #1f5fd8;
+  --bs-navbar-active-color: #1f5fd8;
+  z-index: 10;
+}
+
+/* Franja bajo el header: el blanco se desvanece hacia la página */
+.navbar::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 2.5rem;
+  background: linear-gradient(to bottom, #ffffff, rgba(255, 255, 255, 0));
+  pointer-events: none; /* no bloquea clics sobre la página */
+}
+
+.header-logo {
+  height: 40px;
+  width: auto;
+}
+
+.header-marca {
+  font-family: 'Arial Black', Arial, sans-serif;
+  font-style: italic;
+  font-weight: 900;
+  color: #1f5fd8;
+}
+
+.nav-link {
+  font-weight: 600;
 }

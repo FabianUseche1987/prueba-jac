@@ -11,3 +11,16 @@ body {
 }
 
 p { color: blue; }
+
+/* Botón verde de JAC Connect (usar junto con .btn) */
+.btn-jac {
+  --bs-btn-color: #ffffff;
+  --bs-btn-bg: #3cc152;
+  --bs-btn-border-color: #3cc152;
+  --bs-btn-hover-color: #ffffff;
+  --bs-btn-hover-bg: #32a845;
+  --bs-btn-hover-border-color: #32a845;
+  --bs-btn-active-color: #ffffff;
+  --bs-btn-active-bg: #2b9139;
+  --bs-btn-active-border-color: #2b9139;
+}

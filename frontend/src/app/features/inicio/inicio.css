@@ -1,0 +1,64 @@
+.inicio-hero {
+  padding: 4rem 0;
+  background: linear-gradient(180deg, #a9cdfa 0%, #d6e8fd 55%, #f5f5f5 100%);
+}
+
+.inicio-etiqueta {
+  display: inline-block;
+  padding: 0.35rem 1rem;
+  border-radius: 50rem;
+  background: rgba(255, 255, 255, 0.75);
+  color: #1f5fd8;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.inicio-titulo {
+  color: #1e3a6e;
+}
+
+/* Tarjeta semitransparente (efecto vidrio) */
+.inicio-login {
+  max-width: 400px;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 2rem;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(31, 95, 216, 0.1);
+}
+
+.inicio-saludo-icono {
+  font-size: 3rem;
+  color: #3cc152;
+}
+
+.inicio-card {
+  border-radius: 1.25rem;
+}
+
+.inicio-icono {
+  width: 3.5rem;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #e3effd;
+  color: #1f5fd8;
+  font-size: 1.5rem;
+}
+
+.inicio-paso {
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #3cc152;
+  color: #ffffff;
+  font-size: 1.25rem;
+  font-weight: 700;
+}

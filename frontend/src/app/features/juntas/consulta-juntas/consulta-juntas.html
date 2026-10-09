@@ -1,1 +1,139 @@
-<p>consulta-juntas works!</p>
+<section class="juntas-page py-5">
+  <div class="container">
+    <!-- Título a la izquierda, botón a la derecha -->
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+      <div>
+        <h1 class="h3 fw-bold juntas-titulo">Juntas de Acción Comunal</h1>
+        <p class="text-body-secondary mb-0">
+          Consulta las juntas registradas en JAC Connect ({{ juntas.length }} en total).
+        </p>
+      </div>
+
+      <button type="button" class="btn btn-jac rounded-pill px-4" (click)="registrar()">
+        <i class="bi bi-plus-lg me-1"></i>Registrar junta
+      </button>
+    </div>
+
+    <div class="table-responsive shadow-sm rounded-3">
+      <table class="table table-striped table-hover align-middle mb-0">
+        <thead class="table-azul">
+          <tr>
+            <th>Nombre</th>
+            <th>Barrio</th>
+            <th>Municipio</th>
+            <th>Departamento</th>
+            <th>NIT</th>
+            <th>Representante legal</th>
+            <th>Fundación</th>
+            <th>Estado</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (junta of juntasPagina; track junta.idJunta) {
+            <tr>
+              <td class="fw-semibold">{{ junta.nombre }}</td>
+              <td>{{ junta.barrio }}</td>
+              <td>{{ junta.municipio }}</td>
+              <td>{{ junta.departamento ?? '—' }}</td>
+              <td class="text-nowrap">{{ junta.nit ?? '—' }}</td>
+              <td>{{ junta.representanteLegal ?? '—' }}</td>
+              <td class="text-nowrap">{{ (junta.fechaFundacion | date: 'dd/MM/yyyy') ?? '—' }}</td>
+              <td>
+                <span
+                  class="badge text-capitalize"
+                  [class.text-bg-success]="junta.estado === 'activa'"
+                  [class.text-bg-secondary]="junta.estado === 'inactiva'"
+                >
+                  {{ junta.estado }}
+                </span>
+              </td>
+              <td class="text-center">
+                <div class="btn-group btn-group-sm" role="group">
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary border-0"
+                    title="Editar"
+                    aria-label="Editar junta"
+                    (click)="editar(junta)"
+                  >
+                    <i class="bi bi-pencil-square"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-danger border-0"
+                    title="Eliminar"
+                    aria-label="Eliminar junta"
+                    (click)="eliminar(junta)"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="9" class="text-center text-body-secondary py-4">
+                No hay juntas registradas.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mt-3">
+      <div class="d-flex align-items-center gap-2">
+        <label for="porPagina" class="small text-body-secondary text-nowrap">Filas por página</label>
+        <select
+          id="porPagina"
+          class="form-select form-select-sm w-auto"
+          [(ngModel)]="porPagina"
+          (ngModelChange)="paginaActual = 1"
+        >
+          @for (opcion of opcionesPorPagina; track opcion) {
+            <option [ngValue]="opcion">{{ opcion }}</option>
+          }
+        </select>
+        <span class="small text-body-secondary text-nowrap">
+          Mostrando {{ desde }}–{{ hasta }} de {{ juntas.length }}
+        </span>
+      </div>
+
+      <nav aria-label="Paginación de juntas">
+        <ul class="pagination pagination-sm mb-0 paginacion-azul">
+          <li class="page-item" [class.disabled]="paginaActual === 1">
+            <button type="button" class="page-link" (click)="irAPagina(paginaActual - 1)">Anterior</button>
+          </li>
+          @for (pagina of paginas; track pagina) {
+            <li class="page-item" [class.active]="pagina === paginaActual">
+              <button type="button" class="page-link" (click)="irAPagina(pagina)">{{ pagina }}</button>
+            </li>
+          }
+          <li class="page-item" [class.disabled]="paginaActual === totalPaginas">
+            <button type="button" class="page-link" (click)="irAPagina(paginaActual + 1)">Siguiente</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</section>
+
+<!-- Formulario para registrar o editar (se crea de nuevo cada vez que se abre) -->
+@if (formularioAbierto) {
+  <app-junta-form
+    [junta]="juntaAEditar"
+    (guardar)="guardarJunta($event)"
+    (cancelar)="cerrarFormulario()"
+  />
+}
+
+<!-- Modal compartido para confirmar la eliminación -->
+<app-modal-confirmar
+  [abierto]="juntaAEliminar !== null"
+  titulo="Eliminar junta"
+  [mensaje]="'¿Seguro que deseas eliminar ' + juntaAEliminar?.nombre + '? Esta acción no se puede deshacer.'"
+  (confirmar)="confirmarEliminar()"
+  (cancelar)="juntaAEliminar = null"
+/>

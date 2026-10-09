@@ -1,0 +1,29 @@
+@if (abierto()) {
+  <!-- Fondo oscuro detrás del modal -->
+  <div class="modal-backdrop show"></div>
+
+  <!-- Clic fuera de la tarjeta = cancelar -->
+  <div class="modal d-block" role="dialog" aria-modal="true" aria-labelledby="modal-confirmar-titulo" (click)="cancelar.emit()">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2 class="modal-title fs-5" id="modal-confirmar-titulo">
+            <i class="bi bi-exclamation-triangle text-danger me-2"></i>{{ titulo() }}
+          </h2>
+          <button type="button" class="btn-close" aria-label="Cerrar" (click)="cancelar.emit()"></button>
+        </div>
+
+        <div class="modal-body">{{ mensaje() }}</div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary rounded-pill px-4" (click)="cancelar.emit()">
+            Cancelar
+          </button>
+          <button type="button" class="btn btn-danger rounded-pill px-4" (click)="confirmar.emit()">
+            {{ textoConfirmar() }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

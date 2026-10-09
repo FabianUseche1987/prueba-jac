@@ -1,0 +1,56 @@
+<form [formGroup]="form" (ngSubmit)="ingresar()" novalidate>
+  <div class="mb-3">
+    <label for="usuario" class="form-label">Usuario</label>
+    <input
+      id="usuario"
+      type="text"
+      class="form-control"
+      formControlName="usuario"
+      autocomplete="username"
+      [class.is-invalid]="form.controls.usuario.invalid && form.controls.usuario.touched"
+    />
+    <div class="invalid-feedback">Ingresa tu usuario</div>
+  </div>
+
+  <div class="mb-2">
+    <label for="contrasena" class="form-label">Contraseña</label>
+    <div class="input-group has-validation">
+      <input
+        id="contrasena"
+        [type]="verContrasena ? 'text' : 'password'"
+        class="form-control"
+        formControlName="contrasena"
+        autocomplete="current-password"
+        [class.is-invalid]="form.controls.contrasena.invalid && form.controls.contrasena.touched"
+      />
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="verContrasena = !verContrasena"
+        [attr.aria-label]="verContrasena ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+      >
+        <i class="bi" [class.bi-eye]="!verContrasena" [class.bi-eye-slash]="verContrasena"></i>
+      </button>
+      <div class="invalid-feedback">Ingresa tu contraseña</div>
+    </div>
+  </div>
+
+  <div class="text-end mb-3">
+    <a routerLink="/recuperar-contrasena" class="login-form-link small">¿Olvidaste tu contraseña?</a>
+  </div>
+
+  @if (credencialesIncorrectas) {
+    <div class="alert alert-danger py-2 small" role="alert">
+      <i class="bi bi-exclamation-circle me-1"></i>Usuario o contraseña incorrectos
+    </div>
+  }
+
+  <button type="submit" class="btn btn-jac rounded-pill w-100">Ingresar</button>
+
+  <!-- Usuario de prueba: quitar este bloque cuando exista el backend -->
+  <div class="alert alert-danger small mt-3 mb-0">
+    <strong style="color: #dc3545;">Profe por favor use este usuario de prueba</strong><br />
+    Usuario: {{ usuarioDemo.email }}<br />
+    Contraseña: {{ usuarioDemo.contrasena }}
+  </div>
+</form>
