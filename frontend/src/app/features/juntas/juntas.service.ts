@@ -15,4 +15,19 @@ export class JuntasService {
   listar(): Observable<Junta[]> {
     return this.http.get<Junta[]>(this.url);
   }
+
+  // POST /api/juntas -> devuelve la junta creada (con su id)
+  crear(junta: Junta): Observable<Junta> {
+    return this.http.post<Junta>(this.url, junta);
+  }
+
+  // PUT /api/juntas/:id -> devuelve la junta actualizada
+  actualizar(junta: Junta): Observable<Junta> {
+    return this.http.put<Junta>(`${this.url}/${junta.idJunta}`, junta);
+  }
+
+  // DELETE /api/juntas/:id
+  eliminar(idJunta: number): Observable<void> {
+    return this.http.delete<void>(`${this.url}/${idJunta}`);
+  }
 }

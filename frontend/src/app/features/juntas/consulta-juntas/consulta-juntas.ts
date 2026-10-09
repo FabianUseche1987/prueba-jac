@@ -1,5 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { Junta } from '../models/junta.model';
 import { JuntasService } from '../juntas.service';
@@ -33,6 +34,10 @@ export class ConsultaJuntas implements OnInit {
       next: (juntas) => {
         this.juntas = juntas;
         this.cargando = false;
+        // Si la página actual quedó vacía (por ejemplo, tras eliminar), ir a la última
+        if (this.paginaActual > this.totalPaginas) {
+          this.paginaActual = this.totalPaginas;
+        }
       },
       error: () => {
         this.error = 'No se pudieron cargar las juntas. Revisa que el backend esté encendido.';
@@ -76,17 +81,34 @@ export class ConsultaJuntas implements OnInit {
     }
   }
 
+  // ----- Aviso arriba de la tabla (éxito o error) -----
+  aviso: { tipo: 'success' | 'danger'; texto: string } | null = null;
+
+  // Arma un mensaje claro a partir del error que devuelve la API
+  private mensajeDeError(err: HttpErrorResponse): string {
+    if (err.status === 0) {
+      return 'No hay conexión con el servidor. Revisa que el backend esté encendido.';
+    }
+    const mensaje: string = err.error?.mensaje ?? 'Ocurrió un error inesperado.';
+    const errores: string[] = err.error?.errores ?? [];
+    return errores.length > 0 ? `${mensaje}: ${errores.join('. ')}.` : mensaje;
+  }
+
   // ----- Formulario (registrar / editar) -----
   formularioAbierto = false;
   juntaAEditar: Junta | null = null; // null = registrar una nueva
+  guardando = false;
+  errorFormulario = '';
 
   registrar() {
     this.juntaAEditar = null;
+    this.errorFormulario = '';
     this.formularioAbierto = true;
   }
 
   editar(junta: Junta) {
     this.juntaAEditar = junta;
+    this.errorFormulario = '';
     this.formularioAbierto = true;
   }
 
@@ -95,19 +117,31 @@ export class ConsultaJuntas implements OnInit {
     this.juntaAEditar = null;
   }
 
-  // Recibe la junta que envía el formulario
+  // Recibe la junta que envía el formulario y la guarda en la BD
   guardarJunta(junta: Junta) {
-    // TODO: enviar al backend; por ahora solo se actualiza la lista
-    if (this.juntaAEditar) {
-      // Editar: reemplazar la junta que tiene el mismo id
-      this.juntas = this.juntas.map((j) => (j.idJunta === junta.idJunta ? junta : j));
-    } else {
-      // Registrar: nuevo id = el mayor + 1, y se agrega al inicio de la lista
-      const nuevoId = Math.max(0, ...this.juntas.map((j) => j.idJunta)) + 1;
-      this.juntas = [{ ...junta, idJunta: nuevoId }, ...this.juntas];
-      this.paginaActual = 1; // para que se vea en la primera página
-    }
-    this.cerrarFormulario();
+    const editando = this.juntaAEditar !== null;
+    this.guardando = true;
+    this.errorFormulario = '';
+
+    // Editar -> PUT; registrar -> POST
+    const peticion = editando ? this.juntasService.actualizar(junta) : this.juntasService.crear(junta);
+
+    peticion.subscribe({
+      next: (guardada) => {
+        this.guardando = false;
+        this.cerrarFormulario();
+        this.aviso = {
+          tipo: 'success',
+          texto: `Junta "${guardada.nombre}" ${editando ? 'actualizada' : 'registrada'} correctamente.`,
+        };
+        this.cargarJuntas(); // volver a leer la lista desde la BD
+      },
+      error: (err: HttpErrorResponse) => {
+        // El modal sigue abierto para que no se pierda lo escrito
+        this.guardando = false;
+        this.errorFormulario = this.mensajeDeError(err);
+      },
+    });
   }
 
   // ----- Eliminar -----
@@ -125,15 +159,18 @@ export class ConsultaJuntas implements OnInit {
     if (!this.juntaAEliminar) {
       return;
     }
+    const junta = this.juntaAEliminar;
+    this.juntaAEliminar = null; // cierra el modal
 
-    // Por ahora solo se quita de la lista; luego se llamará al backend
-    const id = this.juntaAEliminar.idJunta;
-    this.juntas = this.juntas.filter((j) => j.idJunta !== id);
-    this.juntaAEliminar = null;
-
-    // Si la página quedó vacía, volver a la anterior
-    if (this.paginaActual > this.totalPaginas) {
-      this.paginaActual = this.totalPaginas;
-    }
+    this.juntasService.eliminar(junta.idJunta).subscribe({
+      next: () => {
+        this.aviso = { tipo: 'success', texto: `Junta "${junta.nombre}" eliminada.` };
+        this.cargarJuntas();
+      },
+      error: (err: HttpErrorResponse) => {
+        // Por ejemplo 409: la junta tiene usuarios o reuniones
+        this.aviso = { tipo: 'danger', texto: this.mensajeDeError(err) };
+      },
+    });
   }
 }

@@ -27,8 +27,8 @@ A partir de aquí se construye la **versión real** (backend, base de datos, aut
 | Qué | Estado |
 |---|---|
 | Base de datos | Corregida con la migración 001 (Fase 0) |
-| Backend | Funcionando: `/api/salud` y `GET /api/juntas` (Fases 1 y 2) |
-| Pantalla de juntas | **Lee las juntas reales de la BD**. Registrar, editar y eliminar todavía solo cambian la pantalla (Fase 2, en curso) |
+| Backend | Funcionando: `/api/salud` y el CRUD de `/api/juntas` (Fases 1 y 2) |
+| Pantalla de juntas | **Conectada a la BD**: listar, registrar, editar y eliminar (Fase 2 terminada) |
 | Login | Sigue con el usuario mock (se cambia en la Fase 3) |
 
 ## 3. Tecnologías
@@ -174,6 +174,8 @@ Reglas:
 | 2026-10-09 | Backend en formato CommonJS (los `import` no llevan extensión `.js`); la BD se usa con un *pool* de `mysql2` y las fechas llegan como texto `'AAAA-MM-DD'`, igual que en el frontend |
 | 2026-10-09 | Se agregó `CLAUDE.md` en la raíz para que cualquier conversación con Claude Code arranque con este contexto y el plan |
 | 2026-10-09 | **`main` no se toca**: Hostinger la publica automáticamente y contiene la versión de la profesora. El desarrollo real va en ramas `feature/...` sin unirse a `main` (sección 12) |
+| 2026-10-09 | **Una junta con datos relacionados no se elimina** (la API responde 409): borrarla eliminaría en cascada sus usuarios, reuniones, proyectos, bienes y avisos. En ese caso se marca como inactiva |
+| 2026-10-09 | Después de guardar o eliminar, el frontend vuelve a pedir la lista a la API, para mostrar siempre lo que hay en la BD |
 
 ## 9. Problemas del esquema y cómo se resolvieron
 
@@ -241,7 +243,7 @@ Ejemplo: `GET /api/salud` → `salud.routes.ts` → `obtenerSalud()` en `salud.c
 | `version-profe` (etiqueta) | El commit `38039ab`, la demo con datos de prueba | Solo para consultarla: `git switch --detach version-profe` |
 | `feature/fase0-base-datos` | Documentación y scripts de base de datos | Ya en GitHub |
 | `feature/fase1-backend-base` | Backend base (sale de la rama de la Fase 0) | Cada fase nueva sale de la rama de la fase anterior |
-| `feature/fase2-juntas` | Juntas conectadas a la BD (sale de la rama de la Fase 1) | En curso |
+| `feature/fase2-juntas` | Juntas conectadas a la BD: CRUD completo (sale de la rama de la Fase 1) | Terminada |
 
 Reglas:
 

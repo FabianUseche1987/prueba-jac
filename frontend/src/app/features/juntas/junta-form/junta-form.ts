@@ -19,6 +19,8 @@ export class JuntaForm implements OnInit {
   private readonly fb = inject(FormBuilder);
 
   junta = input<Junta | null>(null);
+  guardando = input(false);  // true mientras la API responde (desactiva el botón)
+  error = input('');         // mensaje del servidor si algo falla al guardar
 
   guardar = output<Junta>();
   cancelar = output<void>();

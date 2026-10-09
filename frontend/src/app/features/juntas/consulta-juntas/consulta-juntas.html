@@ -14,6 +14,15 @@
       </button>
     </div>
 
+    <!-- Aviso de éxito o error después de guardar o eliminar -->
+    @if (aviso) {
+      <div class="alert d-flex align-items-center" [class.alert-success]="aviso.tipo === 'success'" [class.alert-danger]="aviso.tipo === 'danger'" role="alert">
+        <i class="bi me-2" [class.bi-check-circle]="aviso.tipo === 'success'" [class.bi-exclamation-triangle]="aviso.tipo === 'danger'"></i>
+        <span class="me-auto">{{ aviso.texto }}</span>
+        <button type="button" class="btn-close" aria-label="Cerrar aviso" (click)="aviso = null"></button>
+      </div>
+    }
+
     <div class="table-responsive shadow-sm rounded-3">
       <table class="table table-striped table-hover align-middle mb-0">
         <thead class="table-azul">
@@ -141,6 +150,8 @@
 @if (formularioAbierto) {
   <app-junta-form
     [junta]="juntaAEditar"
+    [guardando]="guardando"
+    [error]="errorFormulario"
     (guardar)="guardarJunta($event)"
     (cancelar)="cerrarFormulario()"
   />

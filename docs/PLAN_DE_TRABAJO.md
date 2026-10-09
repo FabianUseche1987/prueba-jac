@@ -77,27 +77,27 @@
 
 **Backend**
 
-- [ ] **2.1** Endpoints:
+- [x] **2.1** Endpoints:
   - [x] `GET /api/juntas` (lista ordenada por nombre)
-  - [ ] `POST /api/juntas`
-  - [ ] `PUT /api/juntas/:id`
-  - [ ] `DELETE /api/juntas/:id`
+  - [x] `POST /api/juntas` (responde 201 con la junta creada)
+  - [x] `PUT /api/juntas/:id` (404 si no existe)
+  - [x] `DELETE /api/juntas/:id` (204; **409** si la junta tiene usuarios, reuniones, proyectos, bienes o avisos)
 - [x] **2.2** Convertir los nombres entre la BD y el JSON: `representante_legal` ↔ `representanteLegal` (función `filaAJunta` en `backend/src/models/junta.model.ts`).
-- [ ] **2.3** Validar los campos obligatorios y su largo máximo. Si algo falla, responder `400` con el motivo.
-- [ ] **2.4** Escribir todas las consultas con parámetros (`?`), nunca concatenando texto.
+- [x] **2.3** Validar los campos obligatorios y su largo máximo. Si algo falla, responder `400` con el motivo (`validarDatosJunta` también revisa la fecha y el estado).
+- [x] **2.4** Escribir todas las consultas con parámetros (`?`), nunca concatenando texto. *(Probado: un nombre con `'); DROP TABLE junta; --` se guarda como texto normal.)*
 
 **Frontend**
 
 - [x] **2.5** Agregar `provideHttpClient()` en `app.config.ts`. Crear los *environments* con `ng generate environments` y poner ahí la `apiUrl`.
-- [ ] **2.6** Crear `JuntasService` con `HttpClient`. `consulta-juntas` lo usa en lugar de `JUNTAS_MOCK`.
-  - [x] Listar (la tabla ya muestra las juntas de la BD)
-  - [ ] Registrar, editar y eliminar (hoy solo cambian la lista en pantalla)
+- [x] **2.6** Crear `JuntasService` con `HttpClient`. `consulta-juntas` lo usa en lugar de `JUNTAS_MOCK`.
+  - [x] Listar (la tabla muestra las juntas de la BD)
+  - [x] Registrar, editar y eliminar guardan en la BD, con aviso de éxito o error. Si falla al guardar, el modal sigue abierto con el error
 - [x] **2.7** Mostrar "Cargando…" mientras llegan los datos, y un mensaje claro con botón "Reintentar" si la API falla.
 - [x] **2.8** Borrar `juntas.mock.ts`.
 
 **Listo cuando**: crear, editar y eliminar una junta se mantiene después de recargar la página.
 
-*Estado (2026-10-09): primera parte terminada. La tabla lee las juntas reales de Hostinger. Falta guardar en la BD (POST, PUT y DELETE).*
+*✅ Fase 2 terminada el 2026-10-09: registrar, editar y eliminar desde la pantalla se mantienen al recargar (probado de punta a punta contra Hostinger).*
 
 ---
 
