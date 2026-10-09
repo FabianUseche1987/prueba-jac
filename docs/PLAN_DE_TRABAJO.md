@@ -153,7 +153,10 @@ Todos siguen el mismo patrón:
 3. Pantalla.
 4. Permisos por rol: el directivo crea y edita; el ciudadano consulta.
 
-- [ ] **5.1** **Reuniones** y asistencia (`reunion`, `asistencia`)
+- [ ] **5.1** **Reuniones** y asistencia (`reunion`, `asistencia`). Rama `feature/fase5-reuniones`.
+  - [x] Ver: `GET /api/reuniones` (solo la junta del token) y la página `/reuniones`, con pestañas "Próximas" y "Anteriores", tarjetas con la fecha y el detalle (orden del día y acta). Directivos y ciudadanos llegan aquí después del login
+  - [ ] Convocar y editar (solo directivos)
+  - [ ] Asistencia y quórum
 - [ ] **5.2** **Proyectos** y avances, con comentarios y calificaciones (`proyecto`, `avance_proyecto`, `comentario`, `calificacion`)
 - [ ] **5.3** **Avisos** y la campana de no leídos (`notificacion`, `notificacion_usuario`)
 - [ ] **5.4** **Junta directiva**: afiliados y cargos (`usuario_rol`, `rol`)

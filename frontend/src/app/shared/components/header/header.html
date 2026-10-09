@@ -38,6 +38,13 @@
                 Juntas
               </a>
             </li>
+          } @else {
+            <!-- Módulos de la junta: directivos y ciudadanos -->
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/reuniones" routerLinkActive="active" (click)="cerrarMenu()">
+                Reuniones
+              </a>
+            </li>
           }
           <li class="nav-item">
             <span class="navbar-text">

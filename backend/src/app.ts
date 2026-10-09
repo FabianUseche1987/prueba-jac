@@ -3,6 +3,7 @@ import cors from 'cors';
 import saludRoutes from './routes/salud.routes';
 import juntasRoutes from './routes/juntas.routes';
 import authRoutes from './routes/auth.routes';
+import reunionesRoutes from './routes/reuniones.routes';
 import { manejarErrores, rutaNoEncontrada } from './middlewares/errores';
 import { requiereRol, verificarToken } from './middlewares/autenticacion';
 
@@ -22,6 +23,7 @@ app.use('/api/auth', authRoutes);
 //   verificarToken -> 401 si no hay sesión
 //   requiereRol    -> 403 si el perfil no tiene permiso
 app.use('/api/juntas', verificarToken, requiereRol('administrador'), juntasRoutes);
+app.use('/api/reuniones', verificarToken, requiereRol('directivo', 'ciudadano'), reunionesRoutes);
 
 // Siempre al final: ruta no encontrada y manejo de errores
 app.use(rutaNoEncontrada);

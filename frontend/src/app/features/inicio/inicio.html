@@ -40,10 +40,7 @@
               @if (auth.esAdmin()) {
                 <a routerLink="/juntas" class="btn btn-jac rounded-pill w-100">Ir a la gestión de juntas</a>
               } @else {
-                <div class="alert alert-info small text-start mb-0">
-                  <i class="bi bi-info-circle me-1"></i>
-                  Muy pronto encontrarás aquí las reuniones, proyectos y avisos de tu junta.
-                </div>
+                <a routerLink="/reuniones" class="btn btn-jac rounded-pill w-100">Ver las reuniones de mi junta</a>
               }
             </div>
           } @else {

@@ -40,8 +40,8 @@ export class LoginForm {
       next: (usuario) => {
         this.ingresando = false;
         // Cada perfil va a su página: el administrador a la gestión de juntas,
-        // los demás al inicio (por ahora, hasta que existan reuniones, proyectos y avisos)
-        this.router.navigate([usuario.perfil === 'administrador' ? '/juntas' : '/']);
+        // directivos y ciudadanos a las reuniones de su junta
+        this.router.navigate([usuario.perfil === 'administrador' ? '/juntas' : '/reuniones']);
       },
       error: (err: HttpErrorResponse) => {
         this.ingresando = false;

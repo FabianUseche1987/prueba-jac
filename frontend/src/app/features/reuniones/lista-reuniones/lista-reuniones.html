@@ -1,0 +1,111 @@
+<section class="reuniones-page py-5">
+  <div class="container">
+    <div class="mb-4">
+      <h1 class="h3 fw-bold reuniones-titulo">Reuniones</h1>
+      <p class="text-body-secondary mb-0">
+        Asambleas y reuniones de {{ auth.usuario()?.nombreJunta ?? 'tu junta' }}
+      </p>
+    </div>
+
+    <!-- Pestañas: próximas / anteriores -->
+    <ul class="nav nav-tabs mb-4">
+      <li class="nav-item">
+        <button type="button" class="nav-link" [class.active]="pestana === 'proximas'" (click)="pestana = 'proximas'">
+          Próximas <span class="badge rounded-pill text-bg-primary ms-1">{{ proximas.length }}</span>
+        </button>
+      </li>
+      <li class="nav-item">
+        <button type="button" class="nav-link" [class.active]="pestana === 'anteriores'" (click)="pestana = 'anteriores'">
+          Anteriores <span class="badge rounded-pill text-bg-secondary ms-1">{{ anteriores.length }}</span>
+        </button>
+      </li>
+    </ul>
+
+    @if (cargando) {
+      <div class="text-center text-body-secondary py-5">
+        <span class="spinner-border spinner-border-sm text-primary me-2"></span>Cargando reuniones…
+      </div>
+    } @else if (error) {
+      <div class="alert alert-danger d-flex align-items-center" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        <span class="me-auto">{{ error }}</span>
+        <button type="button" class="btn btn-sm btn-outline-danger rounded-pill" (click)="cargarReuniones()">Reintentar</button>
+      </div>
+    } @else {
+      @for (reunion of reunionesPestana; track reunion.idReunion) {
+        <div class="card border-0 shadow-sm mb-3 reunion-card">
+          <div class="card-body d-flex gap-3">
+            <!-- Bloque de fecha -->
+            <div class="reunion-fecha text-center">
+              <div class="reunion-dia">{{ reunion.fechaHora | date: 'd' }}</div>
+              <div class="reunion-mes">{{ reunion.fechaHora | date: 'MMM' }}</div>
+              <div class="small">{{ reunion.fechaHora | date: 'y' }}</div>
+            </div>
+
+            <!-- Datos de la reunión -->
+            <div class="flex-grow-1">
+              <div class="d-flex flex-wrap gap-2 mb-2">
+                <span [class]="'badge rounded-pill text-capitalize ' + claseTipo(reunion.tipo)">
+                  {{ reunion.tipo ?? 'ordinaria' }}
+                </span>
+                <span [class]="'badge rounded-pill text-capitalize ' + claseEstado(reunion.estado)">
+                  {{ reunion.estado }}
+                </span>
+              </div>
+
+              <h2 class="h5 fw-bold mb-1 reuniones-titulo">{{ reunion.titulo }}</h2>
+
+              <div class="text-body-secondary small d-flex flex-wrap gap-3">
+                <span>
+                  <i class="bi bi-clock me-1"></i>
+                  <span class="primera-mayuscula">{{ reunion.fechaHora | date: "EEEE d 'de' MMMM · h:mm a" }}</span>
+                </span>
+                <span>
+                  <i [class]="'bi me-1 ' + iconoModalidad(reunion.modalidad)"></i>{{ reunion.lugar ?? 'Lugar por definir' }}
+                  <span class="text-capitalize">({{ reunion.modalidad ?? 'presencial' }})</span>
+                </span>
+              </div>
+
+              <button type="button" class="btn btn-link btn-sm px-0 mt-1" (click)="alternarDetalle(reunion.idReunion)">
+                @if (detalleAbierto === reunion.idReunion) {
+                  <i class="bi bi-chevron-up me-1"></i>Ocultar detalle
+                } @else {
+                  <i class="bi bi-chevron-down me-1"></i>Ver detalle
+                }
+              </button>
+
+              <!-- Detalle: orden del día y acta -->
+              @if (detalleAbierto === reunion.idReunion) {
+                <div class="reunion-detalle mt-2 p-3 rounded-3">
+                  <h3 class="h6 fw-bold">Orden del día</h3>
+                  <p class="reunion-texto text-body">{{ reunion.ordenDelDia ?? 'No se registró el orden del día.' }}</p>
+
+                  @if (reunion.actaResumen) {
+                    <h3 class="h6 fw-bold">Resumen del acta</h3>
+                    <p class="reunion-texto text-body">{{ reunion.actaResumen }}</p>
+                  }
+
+                  <div class="small text-body-secondary">
+                    Convocada por {{ reunion.creadaPor }}
+                    @if (reunion.quorumRequerido) {
+                      · Quórum requerido: {{ reunion.quorumRequerido }} personas
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      } @empty {
+        <div class="text-center text-body-secondary py-5">
+          <i class="bi bi-calendar-x fs-1 d-block mb-2"></i>
+          @if (pestana === 'proximas') {
+            No hay reuniones programadas por ahora.
+          } @else {
+            Todavía no hay reuniones anteriores.
+          }
+        </div>
+      }
+    }
+  </div>
+</section>

@@ -1,0 +1,68 @@
+/* Ocupa todo el espacio entre header y footer */
+:host {
+  flex: 1;
+  display: flex;
+}
+
+.reuniones-page {
+  flex: 1;
+  background: linear-gradient(180deg, #a9cdfa 0, #f5f5f5 320px);
+}
+
+.reuniones-titulo {
+  color: #1e3a6e;
+}
+
+/* Pestañas con los colores de la marca */
+.nav-tabs .nav-link {
+  color: #1e3a6e;
+  font-weight: 600;
+}
+
+.nav-tabs .nav-link.active {
+  color: #1f5fd8;
+}
+
+.reunion-card {
+  border-radius: 1.25rem;
+}
+
+/* Bloque de la fecha (día grande, mes y año) */
+.reunion-fecha {
+  min-width: 4.5rem;
+  align-self: flex-start;
+  padding: 0.6rem 0.5rem;
+  border-radius: 1rem;
+  background: #e3effd;
+  color: #1f5fd8;
+}
+
+.reunion-dia {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.reunion-mes {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.reunion-detalle {
+  background: #f5f8fd;
+}
+
+/* Solo la primera letra en mayúscula: "Sábado 10 de octubre" */
+.primera-mayuscula {
+  display: inline-block;
+}
+
+.primera-mayuscula::first-letter {
+  text-transform: uppercase;
+}
+
+/* Respeta los saltos de línea del orden del día */
+.reunion-texto {
+  white-space: pre-line;
+}

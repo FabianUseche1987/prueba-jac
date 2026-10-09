@@ -33,6 +33,7 @@ A partir de aquí se construye la **versión real** (backend, base de datos, aut
 | Registro | **Real**: crea la cuenta en la BD con la junta elegida y el rol "Ciudadano común" (Fase 3) |
 | Seguridad de la API | Todo, salvo `/api/salud` y `/api/auth`, exige un token válido (Fase 3) |
 | Roles | La gestión de juntas es solo para el administrador, en la API (403) y en la pantalla. Directivos y ciudadanos ven su cargo y su junta en el inicio (Fase 4) |
+| Reuniones | Directivos y ciudadanos ven las reuniones **de su junta** en `/reuniones`. Convocar, editar y tomar asistencia están en curso (Fase 5.1) |
 
 ## 3. Tecnologías
 
@@ -87,6 +88,10 @@ jacConnect/
 │           │   │   ├── registro/
 │           │   │   ├── recuperar-contrasena/
 │           │   │   └── models/usuario.model.ts
+│           │   ├── reuniones/
+│           │   │   ├── reuniones.service.ts   # llama a la API /api/reuniones
+│           │   │   ├── lista-reuniones/       # página /reuniones: pestañas y tarjetas
+│           │   │   └── models/reunion.model.ts
 │           │   └── juntas/
 │           │       ├── juntas.service.ts      # llama a la API /api/juntas
 │           │       ├── consulta-juntas/       # tabla + paginación
@@ -200,6 +205,8 @@ Reglas:
 | 2026-10-09 | **Registro**: la persona elige su junta en una lista pública (`GET /api/auth/juntas`, solo juntas activas, con id, nombre y municipio) y queda como "Ciudadano común". El usuario y su rol se guardan en una transacción. Si el correo o el documento ya existen, la API responde 409. Después de registrarse hay que iniciar sesión |
 | 2026-10-09 | **Permisos por perfil**: en el backend se usa `verificarToken` y luego `requiereRol(...)` (403 si el perfil no tiene permiso); en el frontend, `rolGuard(...)` y `auth.esAdmin()` para rutas, menú y botones. El administrador NO ve reuniones, proyectos ni avisos (no pertenece a ninguna junta) |
 | 2026-10-09 | El perfil se guarda en el token al iniciar sesión: **si le cambian el rol a alguien, debe cerrar sesión y volver a entrar** para que se aplique |
+| 2026-10-09 | **Módulos de la junta** (reuniones, proyectos, avisos…): la API filtra siempre por el `idJunta` **del token**, nunca por uno que mande el navegador. Así nadie puede ver los datos de otra junta |
+| 2026-10-09 | La app usa el idioma **es-CO** (`LOCALE_ID`): las fechas se muestran como "sábado 10 de octubre · 6:00 p. m." y la moneda en pesos colombianos |
 
 ## 9. Problemas del esquema y cómo se resolvieron
 
@@ -271,6 +278,7 @@ Ejemplo: `GET /api/salud` → `salud.routes.ts` → `obtenerSalud()` en `salud.c
 | `feature/fase2-juntas` | Juntas conectadas a la BD: CRUD completo (sale de la rama de la Fase 1) | Terminada |
 | `feature/fase3-auth` | Login, protección de la API y registro reales (sale de la rama de la Fase 2) | Terminada |
 | `feature/fase4-roles` | Permisos por perfil (sale de la rama de la Fase 3) | Terminada |
+| `feature/fase5-reuniones` | Módulo de reuniones (sale de la rama de la Fase 4) | En curso |
 
 Reglas:
 
