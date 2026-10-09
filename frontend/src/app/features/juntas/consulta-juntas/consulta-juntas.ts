@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Junta } from '../models/junta.model';
-import { JUNTAS_MOCK } from '../data/juntas.mock';
+import { JuntasService } from '../juntas.service';
 import { JuntaForm } from '../junta-form/junta-form';
 import { ModalConfirmar } from '../../../shared/components/modal-confirmar/modal-confirmar';
 
@@ -12,8 +12,34 @@ import { ModalConfirmar } from '../../../shared/components/modal-confirmar/modal
   templateUrl: './consulta-juntas.html',
   styleUrl: './consulta-juntas.css',
 })
-export class ConsultaJuntas {
-  juntas: Junta[] = JUNTAS_MOCK;
+export class ConsultaJuntas implements OnInit {
+  private readonly juntasService = inject(JuntasService);
+
+  juntas: Junta[] = [];
+  cargando = false;
+  error = '';
+
+  ngOnInit() {
+    this.cargarJuntas();
+  }
+
+  // Pide las juntas a la API (GET /api/juntas)
+  cargarJuntas() {
+    this.cargando = true;
+    this.error = '';
+
+    // subscribe(): la petición se envía aquí; next llega con los datos, error si falla
+    this.juntasService.listar().subscribe({
+      next: (juntas) => {
+        this.juntas = juntas;
+        this.cargando = false;
+      },
+      error: () => {
+        this.error = 'No se pudieron cargar las juntas. Revisa que el backend esté encendido.';
+        this.cargando = false;
+      },
+    });
+  }
 
   // Paginación
   opcionesPorPagina = [5, 10, 15];

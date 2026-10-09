@@ -78,22 +78,26 @@
 **Backend**
 
 - [ ] **2.1** Endpoints:
-  - `GET /api/juntas`
-  - `POST /api/juntas`
-  - `PUT /api/juntas/:id`
-  - `DELETE /api/juntas/:id`
-- [ ] **2.2** Convertir los nombres entre la BD y el JSON: `representante_legal` ↔ `representanteLegal`.
+  - [x] `GET /api/juntas` (lista ordenada por nombre)
+  - [ ] `POST /api/juntas`
+  - [ ] `PUT /api/juntas/:id`
+  - [ ] `DELETE /api/juntas/:id`
+- [x] **2.2** Convertir los nombres entre la BD y el JSON: `representante_legal` ↔ `representanteLegal` (función `filaAJunta` en `backend/src/models/junta.model.ts`).
 - [ ] **2.3** Validar los campos obligatorios y su largo máximo. Si algo falla, responder `400` con el motivo.
 - [ ] **2.4** Escribir todas las consultas con parámetros (`?`), nunca concatenando texto.
 
 **Frontend**
 
-- [ ] **2.5** Agregar `provideHttpClient()` en `app.config.ts`. Crear los *environments* con `ng generate environments` y poner ahí la `apiUrl`.
+- [x] **2.5** Agregar `provideHttpClient()` en `app.config.ts`. Crear los *environments* con `ng generate environments` y poner ahí la `apiUrl`.
 - [ ] **2.6** Crear `JuntasService` con `HttpClient`. `consulta-juntas` lo usa en lugar de `JUNTAS_MOCK`.
-- [ ] **2.7** Mostrar "Cargando…" mientras llegan los datos, y un mensaje claro si la API falla.
-- [ ] **2.8** Borrar `juntas.mock.ts`.
+  - [x] Listar (la tabla ya muestra las juntas de la BD)
+  - [ ] Registrar, editar y eliminar (hoy solo cambian la lista en pantalla)
+- [x] **2.7** Mostrar "Cargando…" mientras llegan los datos, y un mensaje claro con botón "Reintentar" si la API falla.
+- [x] **2.8** Borrar `juntas.mock.ts`.
 
 **Listo cuando**: crear, editar y eliminar una junta se mantiene después de recargar la página.
+
+*Estado (2026-10-09): primera parte terminada. La tabla lee las juntas reales de Hostinger. Falta guardar en la BD (POST, PUT y DELETE).*
 
 ---
 

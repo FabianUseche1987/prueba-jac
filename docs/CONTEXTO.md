@@ -22,6 +22,15 @@ Existe una **versión de demostración** (commit `38039ab` "version para la prof
 
 A partir de aquí se construye la **versión real** (backend, base de datos, autenticación y roles), siguiendo [PLAN_DE_TRABAJO.md](PLAN_DE_TRABAJO.md).
 
+**Avance de la versión real** (ramas `feature/...`):
+
+| Qué | Estado |
+|---|---|
+| Base de datos | Corregida con la migración 001 (Fase 0) |
+| Backend | Funcionando: `/api/salud` y `GET /api/juntas` (Fases 1 y 2) |
+| Pantalla de juntas | **Lee las juntas reales de la BD**. Registrar, editar y eliminar todavía solo cambian la pantalla (Fase 2, en curso) |
+| Login | Sigue con el usuario mock (se cambia en la Fase 3) |
+
 ## 3. Tecnologías
 
 | Capa | Tecnología | Estado |
@@ -43,8 +52,9 @@ jacConnect/
 │       ├── env.ts                # carga el .env
 │       ├── app.ts                # configura Express: cors, JSON, rutas, errores
 │       ├── db.ts                 # pool de conexiones a MariaDB
-│       ├── routes/               # qué URL atiende cada módulo (salud.routes.ts…)
-│       ├── controllers/          # qué hace cada endpoint (salud.controller.ts…)
+│       ├── models/               # forma de los datos y conversión BD → JSON (junta.model.ts…)
+│       ├── routes/               # qué URL atiende cada módulo (salud.routes.ts, juntas.routes.ts…)
+│       ├── controllers/          # qué hace cada endpoint (salud.controller.ts, juntas.controller.ts…)
 │       └── middlewares/          # errores.ts: 404 y errores en JSON
 ├── database/
 │   ├── schema.sql                # estructura completa (crea la BD desde cero, ¡borra todo!)
@@ -57,6 +67,7 @@ jacConnect/
 ├── frontend/                     # Angular
 │   ├── public/                   # logo.png, favicon.ico
 │   └── src/
+│       ├── environments/         # apiUrl de la API (desarrollo y producción)
 │       ├── styles.css            # estilos globales (Bootstrap + .btn-jac)
 │       └── app/
 │           ├── app.routes.ts     # rutas
@@ -71,10 +82,10 @@ jacConnect/
 │           │   │   ├── models/usuario.model.ts
 │           │   │   └── data/usuarios.mock.ts  # usuario de prueba (se borra en la Fase 3)
 │           │   └── juntas/
+│           │       ├── juntas.service.ts      # llama a la API /api/juntas
 │           │       ├── consulta-juntas/       # tabla + paginación
 │           │       ├── junta-form/            # modal para registrar / editar
-│           │       ├── models/junta.model.ts
-│           │       └── data/juntas.mock.ts    # juntas de prueba (se borra en la Fase 2)
+│           │       └── models/junta.model.ts
 │           └── shared/components/
 │               ├── header/
 │               ├── footer/
@@ -230,6 +241,7 @@ Ejemplo: `GET /api/salud` → `salud.routes.ts` → `obtenerSalud()` en `salud.c
 | `version-profe` (etiqueta) | El commit `38039ab`, la demo con datos de prueba | Solo para consultarla: `git switch --detach version-profe` |
 | `feature/fase0-base-datos` | Documentación y scripts de base de datos | Ya en GitHub |
 | `feature/fase1-backend-base` | Backend base (sale de la rama de la Fase 0) | Cada fase nueva sale de la rama de la fase anterior |
+| `feature/fase2-juntas` | Juntas conectadas a la BD (sale de la rama de la Fase 1) | En curso |
 
 Reglas:
 

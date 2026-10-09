@@ -30,53 +30,70 @@
           </tr>
         </thead>
         <tbody>
-          @for (junta of juntasPagina; track junta.idJunta) {
-            <tr>
-              <td class="fw-semibold">{{ junta.nombre }}</td>
-              <td>{{ junta.barrio }}</td>
-              <td>{{ junta.municipio }}</td>
-              <td>{{ junta.departamento ?? '—' }}</td>
-              <td class="text-nowrap">{{ junta.nit ?? '—' }}</td>
-              <td>{{ junta.representanteLegal ?? '—' }}</td>
-              <td class="text-nowrap">{{ (junta.fechaFundacion | date: 'dd/MM/yyyy') ?? '—' }}</td>
-              <td>
-                <span
-                  class="badge text-capitalize"
-                  [class.text-bg-success]="junta.estado === 'activa'"
-                  [class.text-bg-secondary]="junta.estado === 'inactiva'"
-                >
-                  {{ junta.estado }}
-                </span>
-              </td>
-              <td class="text-center">
-                <div class="btn-group btn-group-sm" role="group">
-                  <button
-                    type="button"
-                    class="btn btn-outline-primary border-0"
-                    title="Editar"
-                    aria-label="Editar junta"
-                    (click)="editar(junta)"
-                  >
-                    <i class="bi bi-pencil-square"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-outline-danger border-0"
-                    title="Eliminar"
-                    aria-label="Eliminar junta"
-                    (click)="eliminar(junta)"
-                  >
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          } @empty {
+          @if (cargando) {
             <tr>
               <td colspan="9" class="text-center text-body-secondary py-4">
-                No hay juntas registradas.
+                <span class="spinner-border spinner-border-sm text-primary me-2"></span>Cargando juntas…
               </td>
             </tr>
+          } @else if (error) {
+            <tr>
+              <td colspan="9" class="text-center text-danger py-4">
+                <i class="bi bi-exclamation-triangle me-1"></i>{{ error }}
+                <button type="button" class="btn btn-sm btn-outline-primary rounded-pill ms-2" (click)="cargarJuntas()">
+                  Reintentar
+                </button>
+              </td>
+            </tr>
+          } @else {
+            @for (junta of juntasPagina; track junta.idJunta) {
+              <tr>
+                <td class="fw-semibold">{{ junta.nombre }}</td>
+                <td>{{ junta.barrio }}</td>
+                <td>{{ junta.municipio }}</td>
+                <td>{{ junta.departamento ?? '—' }}</td>
+                <td class="text-nowrap">{{ junta.nit ?? '—' }}</td>
+                <td>{{ junta.representanteLegal ?? '—' }}</td>
+                <td class="text-nowrap">{{ (junta.fechaFundacion | date: 'dd/MM/yyyy') ?? '—' }}</td>
+                <td>
+                  <span
+                    class="badge text-capitalize"
+                    [class.text-bg-success]="junta.estado === 'activa'"
+                    [class.text-bg-secondary]="junta.estado === 'inactiva'"
+                  >
+                    {{ junta.estado }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <div class="btn-group btn-group-sm" role="group">
+                    <button
+                      type="button"
+                      class="btn btn-outline-primary border-0"
+                      title="Editar"
+                      aria-label="Editar junta"
+                      (click)="editar(junta)"
+                    >
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-outline-danger border-0"
+                      title="Eliminar"
+                      aria-label="Eliminar junta"
+                      (click)="eliminar(junta)"
+                    >
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="9" class="text-center text-body-secondary py-4">
+                  No hay juntas registradas.
+                </td>
+              </tr>
+            }
           }
         </tbody>
       </table>
