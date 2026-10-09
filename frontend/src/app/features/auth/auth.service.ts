@@ -20,6 +20,9 @@ export class AuthService {
 
   readonly estaLogueado = computed(() => this.usuario() !== null);
 
+  // Mensaje para mostrar en el login cuando la sesión terminó sola (por ejemplo, venció)
+  readonly avisoSesion = signal('');
+
   // Token de la sesión: se enviará a la API en cada petición
   get token(): string | null {
     return sessionStorage.getItem(CLAVE_TOKEN);
@@ -34,6 +37,7 @@ export class AuthService {
         sessionStorage.setItem(CLAVE_TOKEN, respuesta.token);
         sessionStorage.setItem(CLAVE_USUARIO, JSON.stringify(respuesta.usuario));
         this.usuario.set(respuesta.usuario);
+        this.avisoSesion.set('');
       }),
       // map: al componente solo le entregamos el usuario
       map((respuesta) => respuesta.usuario),

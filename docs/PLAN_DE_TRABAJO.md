@@ -110,18 +110,18 @@
 - [x] **3.1** Cifrar las contraseñas con **bcrypt**: un script que actualice las que están en texto plano en Hostinger, y `seed.sql` actualizado con las contraseñas ya cifradas. *(`npm run cifrar-contrasenas`: 15 cifradas el 2026-10-09.)*
 - [x] **3.2** `POST /api/auth/login`: valida email y contraseña, y devuelve los datos del usuario y un **token JWT** (8 horas). El token lleva `idUsuario`, `perfil` e `idJunta`.
 - [ ] **3.3** `POST /api/auth/registro`: crea el usuario con el rol "Ciudadano común" en la junta que eligió (según lo decidido en la Fase 0).
-- [ ] **3.4** Middleware `verificarToken`: las rutas protegidas responden `401` si no llega un token válido. Proteger `/api/juntas`.
+- [x] **3.4** Middleware `verificarToken`: las rutas protegidas responden `401` si no llega un token válido. Proteger `/api/juntas`. *(Probado: sin token, con token falso, alterado o vencido → 401.)*
 
 **Frontend**
 
 - [x] **3.5** `AuthService` llama a la API y guarda el token en `sessionStorage`. El login es con el correo.
-- [ ] **3.6** Crear un **interceptor HTTP** que agrega `Authorization: Bearer <token>` a cada petición. Si la API responde `401`, cierra la sesión y vuelve al inicio.
+- [x] **3.6** Crear un **interceptor HTTP** que agrega `Authorization: Bearer <token>` a cada petición. Si la API responde `401`, cierra la sesión y vuelve al inicio (con el aviso "Tu sesión venció").
 - [ ] **3.7** Conectar el registro a la API, incluido el campo para elegir la junta (si así se decidió).
 - [x] **3.8** Borrar `usuarios.mock.ts` y el recuadro rojo del "usuario de prueba" del login.
 
 **Listo cuando**: se puede registrar un usuario nuevo e iniciar sesión con él, y la API rechaza las peticiones sin token.
 
-*Estado (2026-10-09): parte 1 (login real) terminada. Faltan la parte 2, proteger la API (3.4 y 3.6), y la parte 3, el registro real (3.3 y 3.7).*
+*Estado (2026-10-09): parte 1 (login real) y parte 2 (API protegida con token) terminadas. Falta la parte 3, el registro real (3.3 y 3.7).*
 
 ---
 

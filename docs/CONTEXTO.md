@@ -57,7 +57,7 @@ jacConnect/
 │       ├── models/               # forma de los datos y conversión BD → JSON (junta.model.ts, usuario.model.ts…)
 │       ├── routes/               # qué URL atiende cada módulo (salud.routes.ts, juntas.routes.ts…)
 │       ├── controllers/          # qué hace cada endpoint (salud.controller.ts, juntas.controller.ts…)
-│       └── middlewares/          # errores.ts: 404 y errores en JSON
+│       └── middlewares/          # errores.ts (404 y errores en JSON), autenticacion.ts (verificarToken)
 ├── database/
 │   ├── schema.sql                # estructura completa (crea la BD desde cero, ¡borra todo!)
 │   ├── seed.sql                  # datos de prueba inventados (un usuario por rol)
@@ -77,6 +77,7 @@ jacConnect/
 │           │   ├── inicio/                    # página de inicio (con el login)
 │           │   ├── auth/
 │           │   │   ├── auth.service.ts        # login contra la API; guarda token y usuario
+│           │   │   ├── auth.interceptor.ts    # agrega el token a cada petición; si hay 401, cierra la sesión
 │           │   │   ├── auth.guard.ts          # protege rutas que requieren sesión
 │           │   │   ├── login-form/            # formulario de login reutilizable
 │           │   │   ├── registro/
@@ -190,6 +191,8 @@ Reglas:
 | 2026-10-09 | Después de guardar o eliminar, el frontend vuelve a pedir la lista a la API, para mostrar siempre lo que hay en la BD |
 | 2026-10-09 | **Login real**: con correo y contraseña. La API responde un token JWT que dura 8 horas (lleva `idUsuario`, `perfil` e `idJunta`) y el frontend lo guarda en `sessionStorage`. Si el correo no existe o la contraseña está mal, el mensaje es el mismo, para no revelar qué correos están registrados |
 | 2026-10-09 | Contraseñas con bcrypt (10 rondas). El código de seguridad está en `backend/src/seguridad.ts` |
+| 2026-10-09 | **API protegida**: `/api/salud` y `/api/auth` son públicas; todo lo demás pasa por `verificarToken`, que responde 401 sin un token válido. Los datos del token quedan en `res.locals.usuario`, para que los controladores sepan quién hace la petición |
+| 2026-10-09 | El frontend envía el token con un interceptor, y solo a nuestra API. Si recibe 401, cierra la sesión y avisa "Tu sesión venció" |
 
 ## 9. Problemas del esquema y cómo se resolvieron
 

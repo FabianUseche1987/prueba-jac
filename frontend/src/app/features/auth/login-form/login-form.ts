@@ -14,7 +14,7 @@ import { AuthService } from '../auth.service';
 export class LoginForm {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
-  private readonly auth = inject(AuthService);
+  protected readonly auth = inject(AuthService);
 
   verContrasena = false;
   ingresando = false;

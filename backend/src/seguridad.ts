@@ -44,3 +44,14 @@ export function crearToken(datos: DatosToken): string {
   const duracion = (process.env.JWT_EXPIRES_IN ?? '8h') as jwt.SignOptions['expiresIn'];
   return jwt.sign(datos, secreto(), { expiresIn: duracion });
 }
+
+// Revisa la firma y la fecha de vencimiento del token y devuelve sus datos.
+// Si el token fue alterado o ya venció, lanza un error.
+export function leerToken(token: string): DatosToken {
+  const contenido = jwt.verify(token, secreto(), { algorithms: ['HS256'] }) as jwt.JwtPayload;
+  return {
+    idUsuario: contenido.idUsuario,
+    perfil: contenido.perfil,
+    idJunta: contenido.idJunta,
+  };
+}
