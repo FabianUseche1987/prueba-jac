@@ -3,6 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth.service';
+import { mensajeDeError } from '../../../shared/utils/mensaje-error';
 
 // Formulario de inicio de sesión reutilizable (hoy se usa en el inicio).
 @Component({
@@ -45,10 +46,7 @@ export class LoginForm {
       },
       error: (err: HttpErrorResponse) => {
         this.ingresando = false;
-        this.errorLogin =
-          err.status === 0
-            ? 'No hay conexión con el servidor. Intenta de nuevo en un momento.'
-            : (err.error?.mensaje ?? 'No se pudo iniciar sesión.');
+        this.errorLogin = mensajeDeError(err, 'No se pudo iniciar sesión.');
       },
     });
   }

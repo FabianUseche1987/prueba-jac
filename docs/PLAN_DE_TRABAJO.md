@@ -155,7 +155,7 @@ Todos siguen el mismo patrón:
 
 - [ ] **5.1** **Reuniones** y asistencia (`reunion`, `asistencia`). Rama `feature/fase5-reuniones`.
   - [x] Ver: `GET /api/reuniones` (solo la junta del token) y la página `/reuniones`, con pestañas "Próximas" y "Anteriores", tarjetas con la fecha y el detalle (orden del día y acta). Directivos y ciudadanos llegan aquí después del login
-  - [ ] Convocar y editar (solo directivos)
+  - [x] Convocar y editar (solo directivos): `POST` y `PUT /api/reuniones` con `requiereRol('directivo')`; al editar se puede cambiar el estado (programada, realizada o cancelada) y escribir el acta. Una reunión de otra junta responde 404
   - [ ] Asistencia y quórum
 - [ ] **5.2** **Proyectos** y avances, con comentarios y calificaciones (`proyecto`, `avance_proyecto`, `comentario`, `calificacion`)
 - [ ] **5.3** **Avisos** y la campana de no leídos (`notificacion`, `notificacion_usuario`)

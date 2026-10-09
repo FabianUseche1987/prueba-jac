@@ -13,3 +13,16 @@ export interface Reunion {
   quorumRequerido: number | null;
   creadaPor: string;              // nombre de quien la convocó
 }
+
+// Datos que envía el formulario para convocar o editar una reunión
+export interface DatosReunion {
+  titulo: string;
+  tipo: string;
+  fechaHora: string;              // 'AAAA-MM-DDTHH:MM' (lo que da el campo de fecha y hora)
+  lugar: string | null;
+  modalidad: string;
+  estado: string;
+  ordenDelDia: string | null;
+  actaResumen: string | null;
+  quorumRequerido: number | null;
+}

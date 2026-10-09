@@ -10,6 +10,7 @@ import {
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { JuntaOpcion } from '../models/usuario.model';
+import { mensajeDeError } from '../../../shared/utils/mensaje-error';
 
 // Valida que la contraseña y su confirmación sean iguales
 function contrasenasIguales(form: AbstractControl): ValidationErrors | null {
@@ -106,13 +107,7 @@ export class Registro implements OnInit {
         },
         error: (err: HttpErrorResponse) => {
           this.enviando = false;
-          if (err.status === 0) {
-            this.errorRegistro = 'No hay conexión con el servidor. Intenta de nuevo en un momento.';
-          } else {
-            const errores: string[] = err.error?.errores ?? [];
-            const mensaje: string = err.error?.mensaje ?? 'No se pudo crear la cuenta.';
-            this.errorRegistro = errores.length > 0 ? `${mensaje}: ${errores.join('. ')}.` : mensaje;
-          }
+          this.errorRegistro = mensajeDeError(err, 'No se pudo crear la cuenta.');
         },
       });
   }

@@ -1,11 +1,29 @@
 <section class="reuniones-page py-5">
   <div class="container">
-    <div class="mb-4">
-      <h1 class="h3 fw-bold reuniones-titulo">Reuniones</h1>
-      <p class="text-body-secondary mb-0">
-        Asambleas y reuniones de {{ auth.usuario()?.nombreJunta ?? 'tu junta' }}
-      </p>
+    <!-- Título a la izquierda; "Convocar reunión" a la derecha (solo directivos) -->
+    <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+      <div>
+        <h1 class="h3 fw-bold reuniones-titulo">Reuniones</h1>
+        <p class="text-body-secondary mb-0">
+          Asambleas y reuniones de {{ auth.usuario()?.nombreJunta ?? 'tu junta' }}
+        </p>
+      </div>
+
+      @if (auth.esDirectivo()) {
+        <button type="button" class="btn btn-jac rounded-pill px-4" (click)="convocar()">
+          <i class="bi bi-calendar-plus me-1"></i>Convocar reunión
+        </button>
+      }
     </div>
+
+    <!-- Aviso de éxito o error -->
+    @if (aviso) {
+      <div class="alert d-flex align-items-center" [class.alert-success]="aviso.tipo === 'success'" [class.alert-danger]="aviso.tipo === 'danger'" role="alert">
+        <i class="bi me-2" [class.bi-check-circle]="aviso.tipo === 'success'" [class.bi-exclamation-triangle]="aviso.tipo === 'danger'"></i>
+        <span class="me-auto">{{ aviso.texto }}</span>
+        <button type="button" class="btn-close" aria-label="Cerrar aviso" (click)="aviso = null"></button>
+      </div>
+    }
 
     <!-- Pestañas: próximas / anteriores -->
     <ul class="nav nav-tabs mb-4">
@@ -44,13 +62,25 @@
 
             <!-- Datos de la reunión -->
             <div class="flex-grow-1">
-              <div class="d-flex flex-wrap gap-2 mb-2">
+              <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
                 <span [class]="'badge rounded-pill text-capitalize ' + claseTipo(reunion.tipo)">
                   {{ reunion.tipo ?? 'ordinaria' }}
                 </span>
                 <span [class]="'badge rounded-pill text-capitalize ' + claseEstado(reunion.estado)">
                   {{ reunion.estado }}
                 </span>
+
+                @if (auth.esDirectivo()) {
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-primary border-0 ms-auto"
+                    title="Editar"
+                    aria-label="Editar reunión"
+                    (click)="editar(reunion)"
+                  >
+                    <i class="bi bi-pencil-square"></i>
+                  </button>
+                }
               </div>
 
               <h2 class="h5 fw-bold mb-1 reuniones-titulo">{{ reunion.titulo }}</h2>
@@ -109,3 +139,14 @@
     }
   </div>
 </section>
+
+<!-- Formulario para convocar o editar (se crea de nuevo cada vez que se abre) -->
+@if (formularioAbierto) {
+  <app-reunion-form
+    [reunion]="reunionAEditar"
+    [guardando]="guardando"
+    [error]="errorFormulario"
+    (guardar)="guardarReunion($event)"
+    (cancelar)="cerrarFormulario()"
+  />
+}

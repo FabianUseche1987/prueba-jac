@@ -6,6 +6,7 @@ import { Junta } from '../models/junta.model';
 import { JuntasService } from '../juntas.service';
 import { JuntaForm } from '../junta-form/junta-form';
 import { ModalConfirmar } from '../../../shared/components/modal-confirmar/modal-confirmar';
+import { mensajeDeError } from '../../../shared/utils/mensaje-error';
 
 @Component({
   selector: 'app-consulta-juntas',
@@ -84,16 +85,6 @@ export class ConsultaJuntas implements OnInit {
   // ----- Aviso arriba de la tabla (éxito o error) -----
   aviso: { tipo: 'success' | 'danger'; texto: string } | null = null;
 
-  // Arma un mensaje claro a partir del error que devuelve la API
-  private mensajeDeError(err: HttpErrorResponse): string {
-    if (err.status === 0) {
-      return 'No hay conexión con el servidor. Revisa que el backend esté encendido.';
-    }
-    const mensaje: string = err.error?.mensaje ?? 'Ocurrió un error inesperado.';
-    const errores: string[] = err.error?.errores ?? [];
-    return errores.length > 0 ? `${mensaje}: ${errores.join('. ')}.` : mensaje;
-  }
-
   // ----- Formulario (registrar / editar) -----
   formularioAbierto = false;
   juntaAEditar: Junta | null = null; // null = registrar una nueva
@@ -139,7 +130,7 @@ export class ConsultaJuntas implements OnInit {
       error: (err: HttpErrorResponse) => {
         // El modal sigue abierto para que no se pierda lo escrito
         this.guardando = false;
-        this.errorFormulario = this.mensajeDeError(err);
+        this.errorFormulario = mensajeDeError(err);
       },
     });
   }
@@ -169,7 +160,7 @@ export class ConsultaJuntas implements OnInit {
       },
       error: (err: HttpErrorResponse) => {
         // Por ejemplo 409: la junta tiene usuarios o reuniones
-        this.aviso = { tipo: 'danger', texto: this.mensajeDeError(err) };
+        this.aviso = { tipo: 'danger', texto: mensajeDeError(err) };
       },
     });
   }

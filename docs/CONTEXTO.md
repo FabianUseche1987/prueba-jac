@@ -33,7 +33,7 @@ A partir de aquí se construye la **versión real** (backend, base de datos, aut
 | Registro | **Real**: crea la cuenta en la BD con la junta elegida y el rol "Ciudadano común" (Fase 3) |
 | Seguridad de la API | Todo, salvo `/api/salud` y `/api/auth`, exige un token válido (Fase 3) |
 | Roles | La gestión de juntas es solo para el administrador, en la API (403) y en la pantalla. Directivos y ciudadanos ven su cargo y su junta en el inicio (Fase 4) |
-| Reuniones | Directivos y ciudadanos ven las reuniones **de su junta** en `/reuniones`. Convocar, editar y tomar asistencia están en curso (Fase 5.1) |
+| Reuniones | Directivos y ciudadanos ven las reuniones **de su junta** en `/reuniones`; los directivos convocan y editan (estado y acta). La asistencia está en curso (Fase 5.1) |
 
 ## 3. Tecnologías
 
@@ -57,6 +57,7 @@ jacConnect/
 │       ├── app.ts                # configura Express: cors, JSON, rutas, errores
 │       ├── db.ts                 # pool de conexiones a MariaDB
 │       ├── seguridad.ts          # bcrypt (contraseñas) y JWT (tokens de sesión)
+│       ├── validaciones.ts       # textoLimpio, revisarLargo, esFechaValida... (las usan los modelos)
 │       ├── scripts/              # tareas sueltas: cifrar-contrasenas.ts
 │       ├── models/               # forma de los datos y conversión BD → JSON (junta.model.ts, usuario.model.ts…)
 │       ├── routes/               # qué URL atiende cada módulo (salud.routes.ts, juntas.routes.ts…)
@@ -91,16 +92,19 @@ jacConnect/
 │           │   ├── reuniones/
 │           │   │   ├── reuniones.service.ts   # llama a la API /api/reuniones
 │           │   │   ├── lista-reuniones/       # página /reuniones: pestañas y tarjetas
+│           │   │   ├── reunion-form/          # modal para convocar / editar (directivos)
 │           │   │   └── models/reunion.model.ts
 │           │   └── juntas/
 │           │       ├── juntas.service.ts      # llama a la API /api/juntas
 │           │       ├── consulta-juntas/       # tabla + paginación
 │           │       ├── junta-form/            # modal para registrar / editar
 │           │       └── models/junta.model.ts
-│           └── shared/components/
-│               ├── header/
-│               ├── footer/
-│               └── modal-confirmar/           # modal de confirmación reutilizable
+│           └── shared/
+│               ├── components/
+│               │   ├── header/
+│               │   ├── footer/
+│               │   └── modal-confirmar/       # modal de confirmación reutilizable
+│               └── utils/mensaje-error.ts     # convierte un error de la API en un mensaje claro
 └── .gitignore
 ```
 
@@ -207,6 +211,8 @@ Reglas:
 | 2026-10-09 | El perfil se guarda en el token al iniciar sesión: **si le cambian el rol a alguien, debe cerrar sesión y volver a entrar** para que se aplique |
 | 2026-10-09 | **Módulos de la junta** (reuniones, proyectos, avisos…): la API filtra siempre por el `idJunta` **del token**, nunca por uno que mande el navegador. Así nadie puede ver los datos de otra junta |
 | 2026-10-09 | La app usa el idioma **es-CO** (`LOCALE_ID`): las fechas se muestran como "sábado 10 de octubre · 6:00 p. m." y la moneda en pesos colombianos |
+| 2026-10-09 | Código repetido a archivos compartidos: en el backend, las validaciones van en `validaciones.ts`; en el frontend, los mensajes de error de la API salen de `shared/utils/mensaje-error.ts` |
+| 2026-10-09 | Las reuniones no se eliminan: se marcan como **canceladas** (queda el registro de que se convocaron) |
 
 ## 9. Problemas del esquema y cómo se resolvieron
 

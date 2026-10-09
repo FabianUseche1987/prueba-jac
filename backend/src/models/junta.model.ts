@@ -1,4 +1,5 @@
 import { RowDataPacket } from 'mysql2';
+import { esFechaValida, revisarLargo, textoLimpio } from '../validaciones';
 
 // Junta tal como la envía la API (camelCase).
 // Es la misma forma que usa el frontend en junta.model.ts.
@@ -38,31 +39,6 @@ export function filaAJunta(fila: RowDataPacket): Junta {
 }
 
 // ----- Validación -----
-
-// Quita espacios al inicio y al final. Si queda vacío (o no es texto) devuelve null.
-function textoLimpio(valor: unknown): string | null {
-  if (typeof valor !== 'string') {
-    return null;
-  }
-  const limpio = valor.trim();
-  return limpio === '' ? null : limpio;
-}
-
-// Agrega un error si el texto supera el largo máximo de su columna en la BD
-function revisarLargo(errores: string[], campo: string, valor: string | null, maximo: number) {
-  if (valor && valor.length > maximo) {
-    errores.push(`${campo} admite máximo ${maximo} caracteres`);
-  }
-}
-
-// true si el texto es una fecha real con formato AAAA-MM-DD (rechaza, por ejemplo, 2026-02-31)
-function esFechaValida(texto: string): boolean {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(texto)) {
-    return false;
-  }
-  const fecha = new Date(`${texto}T00:00:00Z`);
-  return !isNaN(fecha.getTime()) && fecha.toISOString().startsWith(texto);
-}
 
 // Revisa los datos que envía el frontend.
 // Devuelve los datos limpios (listos para guardar) o la lista de errores.

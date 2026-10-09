@@ -1,12 +1,15 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../auth/auth.service';
 import { ReunionesService } from '../reuniones.service';
-import { Reunion } from '../models/reunion.model';
+import { DatosReunion, Reunion } from '../models/reunion.model';
+import { ReunionForm } from '../reunion-form/reunion-form';
+import { mensajeDeError } from '../../../shared/utils/mensaje-error';
 
 @Component({
   selector: 'app-lista-reuniones',
-  imports: [DatePipe],
+  imports: [DatePipe, ReunionForm],
   templateUrl: './lista-reuniones.html',
   styleUrl: './lista-reuniones.css',
 })
@@ -60,6 +63,59 @@ export class ListaReuniones implements OnInit {
 
   alternarDetalle(idReunion: number) {
     this.detalleAbierto = this.detalleAbierto === idReunion ? null : idReunion;
+  }
+
+  // ----- Convocar / editar (solo directivos) -----
+  aviso: { tipo: 'success' | 'danger'; texto: string } | null = null;
+  formularioAbierto = false;
+  reunionAEditar: Reunion | null = null;  // null = convocar una nueva
+  guardando = false;
+  errorFormulario = '';
+
+  convocar() {
+    this.reunionAEditar = null;
+    this.errorFormulario = '';
+    this.formularioAbierto = true;
+  }
+
+  editar(reunion: Reunion) {
+    this.reunionAEditar = reunion;
+    this.errorFormulario = '';
+    this.formularioAbierto = true;
+  }
+
+  cerrarFormulario() {
+    this.formularioAbierto = false;
+    this.reunionAEditar = null;
+  }
+
+  guardarReunion(datos: DatosReunion) {
+    const editando = this.reunionAEditar !== null;
+    this.guardando = true;
+    this.errorFormulario = '';
+
+    const peticion = this.reunionAEditar
+      ? this.reunionesService.actualizar(this.reunionAEditar.idReunion, datos)
+      : this.reunionesService.crear(datos);
+
+    peticion.subscribe({
+      next: (guardada) => {
+        this.guardando = false;
+        this.cerrarFormulario();
+        this.aviso = {
+          tipo: 'success',
+          texto: `Reunión "${guardada.titulo}" ${editando ? 'actualizada' : 'convocada'} correctamente.`,
+        };
+        // Mostrar la pestaña donde quedó la reunión y abrir su detalle
+        this.pestana = new Date(guardada.fechaHora).getTime() >= Date.now() ? 'proximas' : 'anteriores';
+        this.detalleAbierto = guardada.idReunion;
+        this.cargarReuniones();
+      },
+      error: (err: HttpErrorResponse) => {
+        this.guardando = false;
+        this.errorFormulario = mensajeDeError(err);  // el modal sigue abierto
+      },
+    });
   }
 
   // ----- Colores e íconos (clases de Bootstrap) -----

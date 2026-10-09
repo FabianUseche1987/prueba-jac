@@ -1,0 +1,150 @@
+<!-- Fondo oscuro detrás del modal -->
+<div class="modal-backdrop show"></div>
+
+<div class="modal d-block" role="dialog" aria-modal="true" aria-labelledby="reunion-form-titulo">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <form [formGroup]="form" (ngSubmit)="enviar()" novalidate>
+        <div class="modal-header">
+          <h2 class="modal-title fs-5" id="reunion-form-titulo">
+            @if (reunion()) {
+              <i class="bi bi-pencil-square me-2"></i>Editar reunión
+            } @else {
+              <i class="bi bi-calendar-plus me-2"></i>Convocar reunión
+            }
+          </h2>
+          <button type="button" class="btn-close" aria-label="Cerrar" (click)="cancelar.emit()"></button>
+        </div>
+
+        <div class="modal-body">
+          @if (error()) {
+            <div class="alert alert-danger py-2 small" role="alert">
+              <i class="bi bi-exclamation-circle me-1"></i>{{ error() }}
+            </div>
+          }
+
+          <div class="row g-3">
+            <div class="col-12">
+              <label for="titulo" class="form-label">Título <span class="text-danger">*</span></label>
+              <input
+                id="titulo"
+                type="text"
+                class="form-control"
+                formControlName="titulo"
+                maxlength="200"
+                placeholder="Ej: Asamblea general ordinaria - noviembre"
+                [class.is-invalid]="invalido('titulo')"
+              />
+              <div class="invalid-feedback">Escribe el título de la reunión</div>
+            </div>
+
+            <div class="col-md-4">
+              <label for="tipo" class="form-label">Tipo</label>
+              <select id="tipo" class="form-select text-capitalize" formControlName="tipo">
+                @for (tipo of tipos; track tipo) {
+                  <option [value]="tipo">{{ tipo }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label for="fechaHora" class="form-label">Fecha y hora <span class="text-danger">*</span></label>
+              <input
+                id="fechaHora"
+                type="datetime-local"
+                class="form-control"
+                formControlName="fechaHora"
+                [class.is-invalid]="invalido('fechaHora')"
+              />
+              <div class="invalid-feedback">Elige la fecha y la hora</div>
+            </div>
+
+            <div class="col-md-4">
+              <label for="modalidad" class="form-label">Modalidad</label>
+              <select id="modalidad" class="form-select text-capitalize" formControlName="modalidad">
+                @for (modalidad of modalidades; track modalidad) {
+                  <option [value]="modalidad">{{ modalidad }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="col-md-8">
+              <label for="lugar" class="form-label">Lugar o enlace</label>
+              <input
+                id="lugar"
+                type="text"
+                class="form-control"
+                formControlName="lugar"
+                maxlength="200"
+                placeholder="Ej: Salón comunal, o el enlace de Google Meet"
+              />
+            </div>
+
+            <div class="col-md-4">
+              <label for="quorumRequerido" class="form-label">Quórum requerido</label>
+              <input
+                id="quorumRequerido"
+                type="number"
+                min="1"
+                class="form-control"
+                formControlName="quorumRequerido"
+                placeholder="Personas"
+                [class.is-invalid]="invalido('quorumRequerido')"
+              />
+              <div class="invalid-feedback">Debe ser 1 o más</div>
+            </div>
+
+            <div class="col-12">
+              <label for="ordenDelDia" class="form-label">Orden del día</label>
+              <textarea
+                id="ordenDelDia"
+                class="form-control"
+                rows="4"
+                formControlName="ordenDelDia"
+                placeholder="Un punto por línea. Ej:&#10;1. Verificación de quórum&#10;2. Informe de tesorería"
+              ></textarea>
+            </div>
+
+            <!-- Solo al editar: estado y acta -->
+            @if (reunion()) {
+              <div class="col-md-4">
+                <label for="estado" class="form-label">Estado</label>
+                <select id="estado" class="form-select text-capitalize" formControlName="estado">
+                  @for (estado of estados; track estado) {
+                    <option [value]="estado">{{ estado }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="col-12">
+                <label for="actaResumen" class="form-label">Resumen del acta</label>
+                <textarea
+                  id="actaResumen"
+                  class="form-control"
+                  rows="3"
+                  formControlName="actaResumen"
+                  placeholder="Qué se decidió en la reunión"
+                ></textarea>
+              </div>
+            }
+          </div>
+
+          <div class="small text-body-secondary mt-3"><span class="text-danger">*</span> Campos obligatorios</div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary rounded-pill px-4" (click)="cancelar.emit()">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-jac rounded-pill px-4" [disabled]="guardando()">
+            @if (guardando()) {
+              <span class="spinner-border spinner-border-sm me-1"></span>Guardando…
+            } @else {
+              {{ reunion() ? 'Guardar cambios' : 'Convocar' }}
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
