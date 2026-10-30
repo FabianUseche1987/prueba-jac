@@ -9,6 +9,7 @@ export interface DatosRegistro {
   numeroDocumento: string;
   correo: string;
   celular: string;
+  usuario: string;
   contrasena: string;
 }
 
@@ -27,8 +28,9 @@ export class AuthService {
   // Devuelve true si el usuario y la contraseña son correctos
   login(usuario: string, contrasena: string): boolean {
     // TODO: reemplazar por una petición HTTP al backend
+    // El usuario no distingue mayúsculas: "AdrianaGuzman" = "adrianaguzman"
     const encontrado = USUARIOS_MOCK.find(
-      (u) => u.email === usuario.trim().toLowerCase() && u.contrasena === contrasena,
+      (u) => u.usuario === usuario.trim().toLowerCase() && u.contrasena === contrasena,
     );
     if (!encontrado) {
       return false;
@@ -53,21 +55,26 @@ export class AuthService {
   }
 
   existeCorreo(correo: string): boolean {
-    return USUARIOS_MOCK.some((u) => u.correo === correo.trim().toLowerCase());
+    return USUARIOS_MOCK.some((u) => u.email === correo.trim().toLowerCase());
+  }
+
+  existeUsuario(usuario: string): boolean {
+    return USUARIOS_MOCK.some((u) => u.usuario === usuario.trim().toLowerCase());
   }
 
   // TODO: reemplazar por una petición HTTP al backend
+  // Después de registrarse, la persona ya puede iniciar sesión con su usuario y contraseña
   registrar(datos: DatosRegistro) {
     USUARIOS_MOCK.push({
       idUsuario: USUARIOS_MOCK.length + 1,
       nombre: datos.nombres,
       apellido: datos.apellidos,
-      email: datos.correo,
+      email: datos.correo.toLowerCase(),
       telefono: datos.celular,
       estado: 'activo',
+      usuario: datos.usuario.toLowerCase(),
       contrasena: datos.contrasena,
       numeroDocumento: datos.numeroDocumento,
-      correo: datos.correo,
     });
   }
 

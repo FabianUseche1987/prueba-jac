@@ -2,11 +2,7 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth.service';
-import { USUARIOS_MOCK } from '../data/usuarios.mock';
-import { requerido } from '../../../shared/utils/validadores';
-
-// Usuario: solo letras, números, punto (.) y guion bajo (_)
-const FORMATO_USUARIO = /^[A-Za-z0-9._]+$/;
+import { FORMATO_USUARIO, requerido } from '../../../shared/utils/validadores';
 
 // Formulario de inicio de sesión reutilizable (hoy se usa en el inicio).
 @Component({
@@ -22,9 +18,6 @@ export class LoginForm {
 
   verContrasena = false;
   credencialesIncorrectas = false;
-
-  // Se muestra en pantalla para que se pueda probar el login
-  usuarioDemo = USUARIOS_MOCK[0];
 
   // Reglas de validación (ver CU-07 en el documento de pruebas)
   form = this.fb.nonNullable.group({

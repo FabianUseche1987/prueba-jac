@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../auth.service';
-import { requerido, SOLO_LETRAS } from '../../../shared/utils/validadores';
+import { FORMATO_USUARIO, requerido, SOLO_LETRAS } from '../../../shared/utils/validadores';
 
 // Formatos de los campos (expresiones regulares)
 const SOLO_NUMEROS = /^\d+$/;
@@ -41,12 +41,15 @@ export class Registro {
     { valor: 'CE', texto: 'Cédula de extranjería' },
   ];
 
-  // El documento y el correo no pueden estar ya registrados
+  // El documento, el correo y el usuario no pueden estar ya registrados
   private documentoDisponible = (control: AbstractControl): ValidationErrors | null =>
     this.auth.existeDocumento(control.value) ? { yaRegistrado: true } : null;
 
   private correoDisponible = (control: AbstractControl): ValidationErrors | null =>
     this.auth.existeCorreo(control.value) ? { yaRegistrado: true } : null;
+
+  private usuarioDisponible = (control: AbstractControl): ValidationErrors | null =>
+    this.auth.existeUsuario(control.value) ? { yaRegistrado: true } : null;
 
   // Reglas de validación (ver CU-08 en el documento de pruebas)
   form = this.fb.nonNullable.group(
@@ -72,6 +75,17 @@ export class Registro {
       ],
       correo: ['', [requerido, Validators.pattern(CORREO), Validators.maxLength(100), this.correoDisponible]],
       celular: ['', [requerido, Validators.pattern(CELULAR)]],
+      // Mismas reglas que el campo Usuario del inicio de sesión
+      usuario: [
+        '',
+        [
+          requerido,
+          Validators.pattern(FORMATO_USUARIO),
+          Validators.minLength(4),
+          Validators.maxLength(50),
+          this.usuarioDisponible,
+        ],
+      ],
       contrasena: [
         '',
         [requerido, Validators.minLength(8), Validators.maxLength(50), Validators.pattern(LETRAS_Y_NUMEROS)],
@@ -121,6 +135,7 @@ export class Registro {
       numeroDocumento: datos.numeroDocumento.trim(),
       correo: datos.correo.trim().toLowerCase(),
       celular: datos.celular,
+      usuario: datos.usuario.trim(),
       contrasena: datos.contrasena,
     });
     this.registrado.set(true);
