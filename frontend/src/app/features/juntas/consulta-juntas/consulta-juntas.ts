@@ -50,6 +50,9 @@ export class ConsultaJuntas {
     }
   }
 
+  // Mensaje de confirmación ("Junta ... registrada"); vacío = no se muestra
+  mensaje = '';
+
   // ----- Formulario (registrar / editar) -----
   formularioAbierto = false;
   juntaAEditar: Junta | null = null; // null = registrar una nueva
@@ -75,11 +78,13 @@ export class ConsultaJuntas {
     if (this.juntaAEditar) {
       // Editar: reemplazar la junta que tiene el mismo id
       this.juntas = this.juntas.map((j) => (j.idJunta === junta.idJunta ? junta : j));
+      this.mensaje = `Junta "${junta.nombre}" actualizada.`;
     } else {
       // Registrar: nuevo id = el mayor + 1, y se agrega al inicio de la lista
       const nuevoId = Math.max(0, ...this.juntas.map((j) => j.idJunta)) + 1;
       this.juntas = [{ ...junta, idJunta: nuevoId }, ...this.juntas];
       this.paginaActual = 1; // para que se vea en la primera página
+      this.mensaje = `Junta "${junta.nombre}" registrada.`;
     }
     this.cerrarFormulario();
   }
@@ -101,9 +106,10 @@ export class ConsultaJuntas {
     }
 
     // Por ahora solo se quita de la lista; luego se llamará al backend
-    const id = this.juntaAEliminar.idJunta;
-    this.juntas = this.juntas.filter((j) => j.idJunta !== id);
+    const { idJunta, nombre } = this.juntaAEliminar;
+    this.juntas = this.juntas.filter((j) => j.idJunta !== idJunta);
     this.juntaAEliminar = null;
+    this.mensaje = `Junta "${nombre}" eliminada.`;
 
     // Si la página quedó vacía, volver a la anterior
     if (this.paginaActual > this.totalPaginas) {

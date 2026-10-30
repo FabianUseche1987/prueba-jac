@@ -7,9 +7,20 @@
       class="form-control"
       formControlName="usuario"
       autocomplete="username"
-      [class.is-invalid]="form.controls.usuario.invalid && form.controls.usuario.touched"
+      maxlength="50"
+      [class.is-invalid]="invalido('usuario')"
     />
-    <div class="invalid-feedback">Ingresa tu usuario</div>
+    <div class="invalid-feedback">
+      @if (form.controls.usuario.hasError('required')) {
+        Ingresa tu usuario
+      } @else if (form.controls.usuario.hasError('pattern')) {
+        Solo se permiten letras, números, punto (.) y guion bajo (_)
+      } @else if (form.controls.usuario.hasError('minlength')) {
+        El usuario debe tener mínimo 4 caracteres
+      } @else {
+        El usuario admite máximo 50 caracteres
+      }
+    </div>
   </div>
 
   <div class="mb-2">
@@ -21,7 +32,8 @@
         class="form-control"
         formControlName="contrasena"
         autocomplete="current-password"
-        [class.is-invalid]="form.controls.contrasena.invalid && form.controls.contrasena.touched"
+        maxlength="50"
+        [class.is-invalid]="invalido('contrasena')"
       />
       <button
         type="button"
@@ -31,7 +43,13 @@
       >
         <i class="bi" [class.bi-eye]="!verContrasena" [class.bi-eye-slash]="verContrasena"></i>
       </button>
-      <div class="invalid-feedback">Ingresa tu contraseña</div>
+      <div class="invalid-feedback">
+        @if (form.controls.contrasena.hasError('required')) {
+          Ingresa tu contraseña
+        } @else {
+          La contraseña admite máximo 50 caracteres
+        }
+      </div>
     </div>
   </div>
 
@@ -45,7 +63,8 @@
     </div>
   }
 
-  <button type="submit" class="btn btn-jac rounded-pill w-100">Ingresar</button>
+  <!-- Inactivo mientras el formulario tenga errores -->
+  <button type="submit" class="btn btn-jac rounded-pill w-100" [disabled]="form.invalid">Ingresar</button>
 
   <!-- Usuario de prueba: quitar este bloque cuando exista el backend -->
   <div class="alert alert-danger small mt-3 mb-0">

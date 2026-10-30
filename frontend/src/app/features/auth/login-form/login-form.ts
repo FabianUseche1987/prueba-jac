@@ -3,6 +3,10 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { USUARIOS_MOCK } from '../data/usuarios.mock';
+import { requerido } from '../../../shared/utils/validadores';
+
+// Usuario: solo letras, números, punto (.) y guion bajo (_)
+const FORMATO_USUARIO = /^[A-Za-z0-9._]+$/;
 
 // Formulario de inicio de sesión reutilizable (hoy se usa en el inicio).
 @Component({
@@ -22,14 +26,25 @@ export class LoginForm {
   // Se muestra en pantalla para que se pueda probar el login
   usuarioDemo = USUARIOS_MOCK[0];
 
+  // Reglas de validación (ver CU-07 en el documento de pruebas)
   form = this.fb.nonNullable.group({
-    usuario: ['', Validators.required],
-    contrasena: ['', Validators.required],
+    usuario: [
+      '',
+      [requerido, Validators.pattern(FORMATO_USUARIO), Validators.minLength(4), Validators.maxLength(50)],
+    ],
+    contrasena: ['', [requerido, Validators.maxLength(50)]],
   });
+
+  // Un campo se marca en rojo apenas se escribe en él (dirty) o al salir de él (touched)
+  invalido(campo: 'usuario' | 'contrasena') {
+    const control = this.form.controls[campo];
+    return control.invalid && (control.dirty || control.touched);
+  }
 
   ingresar() {
     this.credencialesIncorrectas = false;
 
+    // El botón está inactivo si el formulario es inválido; esto es solo por seguridad
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;

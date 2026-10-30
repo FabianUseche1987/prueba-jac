@@ -23,9 +23,20 @@
                 class="form-control"
                 formControlName="nombres"
                 autocomplete="given-name"
+                maxlength="50"
                 [class.is-invalid]="invalido('nombres')"
               />
-              <div class="invalid-feedback">Ingresa tus nombres</div>
+              <div class="invalid-feedback">
+                @if (form.controls.nombres.hasError('required')) {
+                  Ingresa tus nombres
+                } @else if (form.controls.nombres.hasError('pattern')) {
+                  Solo se permiten letras
+                } @else if (form.controls.nombres.hasError('minlength')) {
+                  Mínimo 2 caracteres
+                } @else {
+                  Máximo 50 caracteres
+                }
+              </div>
             </div>
 
             <div class="col-md-6">
@@ -36,9 +47,20 @@
                 class="form-control"
                 formControlName="apellidos"
                 autocomplete="family-name"
+                maxlength="50"
                 [class.is-invalid]="invalido('apellidos')"
               />
-              <div class="invalid-feedback">Ingresa tus apellidos</div>
+              <div class="invalid-feedback">
+                @if (form.controls.apellidos.hasError('required')) {
+                  Ingresa tus apellidos
+                } @else if (form.controls.apellidos.hasError('pattern')) {
+                  Solo se permiten letras
+                } @else if (form.controls.apellidos.hasError('minlength')) {
+                  Mínimo 2 caracteres
+                } @else {
+                  Máximo 50 caracteres
+                }
+              </div>
             </div>
 
             <div class="col-md-6">
@@ -60,11 +82,16 @@
                 formControlName="numeroDocumento"
                 [class.is-invalid]="invalido('numeroDocumento')"
               />
+              <!-- Sin maxlength a propósito: si se escriben 11 dígitos, se muestra el mensaje -->
               <div class="invalid-feedback">
                 @if (form.controls.numeroDocumento.hasError('required')) {
                   Ingresa tu número de documento
+                } @else if (form.controls.numeroDocumento.hasError('pattern')) {
+                  Solo se permiten números
+                } @else if (form.controls.numeroDocumento.hasError('yaRegistrado')) {
+                  Ya existe una cuenta con este documento
                 } @else {
-                  Solo números, entre 5 y 12 dígitos
+                  Debe tener entre 6 y 10 dígitos
                 }
               </div>
             </div>
@@ -78,13 +105,18 @@
                 class="form-control"
                 formControlName="correo"
                 autocomplete="email"
+                maxlength="100"
                 [class.is-invalid]="invalido('correo')"
               />
               <div class="invalid-feedback">
                 @if (form.controls.correo.hasError('required')) {
                   Ingresa tu correo
+                } @else if (form.controls.correo.hasError('pattern')) {
+                  Ingresa un correo válido
+                } @else if (form.controls.correo.hasError('yaRegistrado')) {
+                  Ya existe una cuenta con este correo
                 } @else {
-                  Escribe un correo válido
+                  Máximo 100 caracteres
                 }
               </div>
             </div>
@@ -98,13 +130,14 @@
                 class="form-control"
                 formControlName="celular"
                 autocomplete="tel-national"
+                maxlength="10"
                 [class.is-invalid]="invalido('celular')"
               />
               <div class="invalid-feedback">
                 @if (form.controls.celular.hasError('required')) {
                   Ingresa tu número de celular
                 } @else {
-                  Debe tener 10 dígitos
+                  El celular debe tener 10 dígitos e iniciar por 3
                 }
               </div>
             </div>
@@ -119,6 +152,7 @@
                   class="form-control"
                   formControlName="contrasena"
                   autocomplete="new-password"
+                  maxlength="50"
                   [class.is-invalid]="invalido('contrasena')"
                 />
                 <button
@@ -132,8 +166,10 @@
                 <div class="invalid-feedback">
                   @if (form.controls.contrasena.hasError('required')) {
                     Ingresa una contraseña
+                  } @else if (form.controls.contrasena.hasError('maxlength')) {
+                    Máximo 50 caracteres
                   } @else {
-                    Mínimo 8 caracteres
+                    Mínimo 8 caracteres, con letras y números
                   }
                 </div>
               </div>
@@ -147,6 +183,7 @@
                 class="form-control"
                 formControlName="confirmarContrasena"
                 autocomplete="new-password"
+                maxlength="50"
                 [class.is-invalid]="confirmacionInvalida()"
               />
               <div class="invalid-feedback">
@@ -165,12 +202,12 @@
                   type="checkbox"
                   class="form-check-input"
                   formControlName="aceptaDatos"
-                  [class.is-invalid]="invalido('aceptaDatos')"
+                  [class.is-invalid]="autorizacionInvalida()"
                 />
                 <label for="aceptaDatos" class="form-check-label small">
                   Autorizo el tratamiento de mis datos personales. <span class="text-danger">*</span>
                 </label>
-                <div class="invalid-feedback">Debes aceptar para continuar</div>
+                <div class="invalid-feedback">Debes autorizar el tratamiento de tus datos personales para registrarte</div>
               </div>
             </div>
           </div>
@@ -178,7 +215,13 @@
           <div class="small text-body-secondary mt-3"><span class="text-danger">*</span> Campos obligatorios</div>
 
           <div class="text-center mt-4">
-            <button type="submit" class="btn btn-jac rounded-pill px-5">Registrarme</button>
+            <!-- Inactivo mientras el formulario tenga errores -->
+            <button type="submit" class="btn btn-jac rounded-pill px-5" [disabled]="form.invalid">Registrarme</button>
+            @if (form.invalid) {
+              <div class="small text-body-secondary mt-2">
+                El botón se activa cuando todos los campos estén completos y sin errores.
+              </div>
+            }
           </div>
         </form>
 

@@ -25,11 +25,21 @@
                 type="text"
                 class="form-control"
                 formControlName="nombre"
-                maxlength="150"
+                maxlength="100"
                 placeholder="Ej: JAC Barrio El Progreso"
                 [class.is-invalid]="invalido('nombre')"
               />
-              <div class="invalid-feedback">Ingresa el nombre de la junta</div>
+              <div class="invalid-feedback">
+                @if (form.controls.nombre.hasError('required')) {
+                  Ingresa el nombre de la junta
+                } @else if (form.controls.nombre.hasError('pattern')) {
+                  El nombre contiene caracteres no permitidos (solo letras, números, espacios, punto y guion)
+                } @else if (form.controls.nombre.hasError('minlength')) {
+                  El nombre debe tener mínimo 5 caracteres
+                } @else {
+                  El nombre admite máximo 100 caracteres
+                }
+              </div>
             </div>
 
             <div class="col-md-6">
@@ -39,10 +49,18 @@
                 type="text"
                 class="form-control"
                 formControlName="barrio"
-                maxlength="100"
+                maxlength="80"
                 [class.is-invalid]="invalido('barrio')"
               />
-              <div class="invalid-feedback">Ingresa el barrio o vereda</div>
+              <div class="invalid-feedback">
+                @if (form.controls.barrio.hasError('required')) {
+                  Ingresa el barrio o vereda
+                } @else if (form.controls.barrio.hasError('minlength')) {
+                  Mínimo 3 caracteres
+                } @else {
+                  Máximo 80 caracteres
+                }
+              </div>
             </div>
 
             <div class="col-md-6">
@@ -52,20 +70,53 @@
                 type="text"
                 class="form-control"
                 formControlName="municipio"
-                maxlength="100"
+                maxlength="60"
                 [class.is-invalid]="invalido('municipio')"
               />
-              <div class="invalid-feedback">Ingresa el municipio</div>
+              <div class="invalid-feedback">
+                @if (form.controls.municipio.hasError('required')) {
+                  Ingresa el municipio
+                } @else if (form.controls.municipio.hasError('pattern')) {
+                  Solo se permiten letras
+                } @else if (form.controls.municipio.hasError('minlength')) {
+                  Mínimo 3 caracteres
+                } @else {
+                  Máximo 60 caracteres
+                }
+              </div>
             </div>
 
             <div class="col-md-6">
               <label for="departamento" class="form-label">Departamento</label>
-              <input id="departamento" type="text" class="form-control" formControlName="departamento" maxlength="100" />
+              <input
+                id="departamento"
+                type="text"
+                class="form-control"
+                formControlName="departamento"
+                maxlength="60"
+                [class.is-invalid]="invalido('departamento')"
+              />
+              <div class="invalid-feedback">
+                @if (form.controls.departamento.hasError('pattern')) {
+                  Solo se permiten letras
+                } @else {
+                  Máximo 60 caracteres
+                }
+              </div>
             </div>
 
             <div class="col-md-6">
               <label for="nit" class="form-label">NIT</label>
-              <input id="nit" type="text" class="form-control" formControlName="nit" maxlength="20" placeholder="Ej: 900.123.456-7" />
+              <input
+                id="nit"
+                type="text"
+                class="form-control"
+                formControlName="nit"
+                maxlength="13"
+                placeholder="Ej: 900.123.456-7"
+                [class.is-invalid]="invalido('nit')"
+              />
+              <div class="invalid-feedback">Formato de NIT no válido (Ej: 900.123.456-7)</div>
             </div>
 
             <div class="col-md-6">
@@ -75,17 +126,43 @@
                 type="text"
                 class="form-control"
                 formControlName="representanteLegal"
-                maxlength="150"
+                maxlength="80"
+                [class.is-invalid]="invalido('representanteLegal')"
               />
+              <div class="invalid-feedback">
+                @if (form.controls.representanteLegal.hasError('pattern')) {
+                  Solo se permiten letras
+                } @else if (form.controls.representanteLegal.hasError('minlength')) {
+                  Mínimo 2 caracteres
+                } @else {
+                  Máximo 80 caracteres
+                }
+              </div>
             </div>
 
             <div class="col-md-3">
               <label for="fechaFundacion" class="form-label">Fundación</label>
-              <input id="fechaFundacion" type="date" class="form-control" formControlName="fechaFundacion" />
+              <!-- min y max limitan el calendario; si la fecha se escribe a mano, la valida fechaFundacionValida -->
+              <input
+                id="fechaFundacion"
+                type="date"
+                class="form-control"
+                formControlName="fechaFundacion"
+                [min]="fechaMinima"
+                [max]="fechaMaxima"
+                [class.is-invalid]="invalido('fechaFundacion')"
+              />
+              <div class="invalid-feedback">
+                @if (form.controls.fechaFundacion.hasError('fechaFutura')) {
+                  La fecha no puede ser posterior a hoy
+                } @else {
+                  Fecha de fundación no válida (debe ser desde 1958)
+                }
+              </div>
             </div>
 
             <div class="col-md-3">
-              <label for="estado" class="form-label">Estado</label>
+              <label for="estado" class="form-label">Estado <span class="text-danger">*</span></label>
               <select id="estado" class="form-select" formControlName="estado">
                 <option value="activa">Activa</option>
                 <option value="inactiva">Inactiva</option>
@@ -93,14 +170,27 @@
             </div>
           </div>
 
-          <div class="small text-body-secondary mt-3"><span class="text-danger">*</span> Campos obligatorios</div>
+          @if (form.hasError('juntaDuplicada')) {
+            <div class="alert alert-danger py-2 small mt-3 mb-0" role="alert">
+              <i class="bi bi-exclamation-circle me-1"></i>Ya existe una junta con ese nombre en este barrio y municipio.
+            </div>
+          }
+
+          <div class="small text-body-secondary mt-3">
+            <span class="text-danger">*</span> Campos obligatorios.
+            @if (form.invalid) {
+              El botón "{{ junta() ? 'Guardar cambios' : 'Registrar' }}" se activa cuando todos los campos estén
+              completos y sin errores.
+            }
+          </div>
         </div>
 
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary rounded-pill px-4" (click)="cancelar.emit()">
             Cancelar
           </button>
-          <button type="submit" class="btn btn-jac rounded-pill px-4">
+          <!-- Inactivo mientras el formulario tenga errores -->
+          <button type="submit" class="btn btn-jac rounded-pill px-4" [disabled]="form.invalid">
             {{ junta() ? 'Guardar cambios' : 'Registrar' }}
           </button>
         </div>
