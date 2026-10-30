@@ -14,6 +14,14 @@
       </button>
     </div>
 
+    <!-- Confirmación después de registrar, editar o eliminar -->
+    @if (mensaje) {
+      <div class="alert alert-success alert-dismissible d-flex align-items-center" role="status">
+        <i class="bi bi-check-circle me-2"></i>{{ mensaje }}
+        <button type="button" class="btn-close" aria-label="Cerrar" (click)="mensaje = ''"></button>
+      </div>
+    }
+
     <div class="table-responsive shadow-sm rounded-3">
       <table class="table table-striped table-hover align-middle mb-0">
         <thead class="table-azul">
@@ -124,6 +132,7 @@
 @if (formularioAbierto) {
   <app-junta-form
     [junta]="juntaAEditar"
+    [juntas]="juntas"
     (guardar)="guardarJunta($event)"
     (cancelar)="cerrarFormulario()"
   />

@@ -23,4 +23,8 @@ p { color: blue; }
   --bs-btn-active-color: #ffffff;
   --bs-btn-active-bg: #2b9139;
   --bs-btn-active-border-color: #2b9139;
+  /* Inactivo (disabled): el mismo verde, atenuado por Bootstrap */
+  --bs-btn-disabled-color: #ffffff;
+  --bs-btn-disabled-bg: #3cc152;
+  --bs-btn-disabled-border-color: #3cc152;
 }
