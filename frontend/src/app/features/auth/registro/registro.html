@@ -142,7 +142,39 @@
               </div>
             </div>
 
-            <!-- Contraseña -->
+            <!-- Datos para iniciar sesión: usuario y contraseña -->
+            <div class="col-md-6">
+              <label for="usuario" class="form-label">Usuario <span class="text-danger">*</span></label>
+              <input
+                id="usuario"
+                type="text"
+                class="form-control"
+                formControlName="usuario"
+                autocomplete="username"
+                maxlength="50"
+                [class.is-invalid]="invalido('usuario')"
+              />
+              <div class="invalid-feedback">
+                @if (form.controls.usuario.hasError('required')) {
+                  Ingresa un nombre de usuario
+                } @else if (form.controls.usuario.hasError('pattern')) {
+                  Solo se permiten letras, números, punto (.) y guion bajo (_)
+                } @else if (form.controls.usuario.hasError('minlength')) {
+                  El usuario debe tener mínimo 4 caracteres
+                } @else if (form.controls.usuario.hasError('yaRegistrado')) {
+                  Este usuario ya está en uso, elige otro
+                } @else {
+                  El usuario admite máximo 50 caracteres
+                }
+              </div>
+            </div>
+
+            <div class="col-md-6 d-flex align-items-md-end">
+              <div class="form-text mt-0 mb-md-2">
+                <i class="bi bi-info-circle me-1"></i>Con este usuario y tu contraseña inicias sesión.
+              </div>
+            </div>
+
             <div class="col-md-6">
               <label for="contrasena" class="form-label">Contraseña <span class="text-danger">*</span></label>
               <div class="input-group has-validation">
@@ -236,7 +268,8 @@
           <h1 class="h4 fw-bold registro-titulo">¡Cuenta creada!</h1>
           <p class="text-body-secondary mb-4">
             Listo, <strong>{{ form.controls.nombres.value }}</strong>. Tu cuenta fue creada y ya
-            puedes iniciar sesión en JAC Connect.
+            puedes iniciar sesión en JAC Connect con el usuario
+            <strong>{{ form.controls.usuario.value.trim().toLowerCase() }}</strong>.
           </p>
           <a routerLink="/" class="btn btn-jac rounded-pill px-5">Iniciar sesión</a>
         </div>
